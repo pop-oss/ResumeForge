@@ -95,14 +95,18 @@ export const FreeDraggable: React.FC<FreeDraggableProps> = ({
     marginBottom: currentPos.y < 0 ? Math.abs(currentPos.y) : -currentPos.y,
   } : {};
 
-  // 非编辑模式，只应用位置偏移
+  // 非编辑模式，直接返回子元素（不添加任何包装）
   if (!editMode) {
-    if (!hasOffset) return <>{children}</>;
-    return (
-      <div className={className} style={offsetStyle}>
-        {children}
-      </div>
-    );
+    // 如果有位置偏移，需要包装一个 span 来应用样式
+    if (hasOffset) {
+      return (
+        <span style={offsetStyle}>
+          {children}
+        </span>
+      );
+    }
+    // 没有偏移，直接返回子元素
+    return <>{children}</>;
   }
 
   return (
@@ -111,7 +115,7 @@ export const FreeDraggable: React.FC<FreeDraggableProps> = ({
       className={cn(
         "group relative",
         isDragging && "z-50 opacity-80",
-        editMode && "hover:outline hover:outline-1 hover:outline-blue-300 hover:outline-dashed rounded",
+        editMode && "hover:outline hover:outline-1 hover:outline-blue-300 hover:outline-dashed rounded print:outline-none",
         className
       )}
       style={{
@@ -124,7 +128,7 @@ export const FreeDraggable: React.FC<FreeDraggableProps> = ({
         <button
           type="button"
           className={cn(
-            "drag-handle absolute -left-5 top-0 p-0.5 rounded cursor-grab",
+            "drag-handle absolute -left-5 top-0 p-0.5 rounded cursor-grab print:hidden",
             "opacity-0 group-hover:opacity-100 transition-opacity",
             "hover:bg-blue-100 text-blue-500",
             "focus:outline-none",

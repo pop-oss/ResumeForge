@@ -54,6 +54,17 @@ export const Header: React.FC<HeaderProps> = ({ zoom, setZoom }) => {
         const A4_WIDTH_PX = A4_WIDTH_MM * MM_TO_PX;
         const A4_HEIGHT_PX = A4_HEIGHT_MM * MM_TO_PX;
 
+        // 保存当前状态，导出时临时重置
+        const wasEditMode = resumeData.settings.editMode;
+        const savedPositions = resumeData.settings.elementPositions;
+        const savedZoom = zoom;
+        
+        // 临时关闭编辑模式、清除位置偏移，并重置缩放为100%
+        updateSettings({ editMode: false, elementPositions: {} });
+        setZoom(1); // 重置缩放为100%以确保PDF正确渲染
+        // 等待 React 重新渲染
+        await new Promise(resolve => setTimeout(resolve, 200));
+
         try {
             // 高质量渲染
             const canvas = await html2canvas(element, {
@@ -106,6 +117,13 @@ export const Header: React.FC<HeaderProps> = ({ zoom, setZoom }) => {
         } catch (error) {
             console.error('PDF generation failed', error);
             alert('Failed to generate PDF. Please try the Print option.');
+        } finally {
+            // 恢复原来的状态
+            updateSettings({ 
+                editMode: wasEditMode || false, 
+                elementPositions: savedPositions 
+            });
+            setZoom(savedZoom); // 恢复原来的缩放比例
         }
     };
 
