@@ -36,10 +36,21 @@ const SECTION_COMPONENTS: Record<string, React.FC> = {
     custom: CustomForm,
 };
 
+// Section ID 到 fieldLabels key 的映射
+const SECTION_LABEL_KEYS: Record<string, string> = {
+    basics: 'sectionBasics',
+    summary: 'sectionSummary',
+    experience: 'sectionExperience',
+    education: 'sectionEducation',
+    projects: 'sectionProjects',
+    skills: 'sectionSkills',
+    custom: 'sectionCustom',
+};
+
 export const Editor: React.FC = () => {
-    const { resumeData, reorderSections, updateSettings } = useResume();
+    const { resumeData, reorderSections, updateSettings, setResumeData } = useResume();
     const { t } = useLanguage();
-    const { sectionOrder, sectionVisibility = {} } = resumeData.settings;
+    const { sectionOrder, sectionVisibility = {}, fieldLabels = {} } = resumeData.settings;
 
     const SECTION_TITLES: Record<string, string> = {
         basics: t.basics,
@@ -77,6 +88,22 @@ export const Editor: React.FC = () => {
         });
     };
 
+    const updateSectionTitle = (sectionId: string, value: string) => {
+        const labelKey = SECTION_LABEL_KEYS[sectionId];
+        if (labelKey) {
+            setResumeData({
+                ...resumeData,
+                settings: {
+                    ...resumeData.settings,
+                    fieldLabels: {
+                        ...fieldLabels,
+                        [labelKey]: value
+                    }
+                }
+            });
+        }
+    };
+
     return (
         <div className="h-full flex flex-col">
             <div className="p-4 border-b bg-background/50 backdrop-blur z-10">
@@ -96,19 +123,17 @@ export const Editor: React.FC = () => {
                             {sectionOrder.map((sectionId) => {
                                 const Component = SECTION_COMPONENTS[sectionId];
                                 const title = SECTION_TITLES[sectionId] || sectionId;
+                                const labelKey = SECTION_LABEL_KEYS[sectionId] as keyof typeof fieldLabels;
+                                const customTitle = fieldLabels[labelKey] as string | undefined;
                                 const isVisible = sectionVisibility[sectionId] ?? true;
-
-                                // Basics usually shouldn't be hidden or reordered? 
-                                // Prompt says "Modules draggable (At least: Work, Project, Education, Skills, Certs/Custom)".
-                                // Maybe restrict Basics from being reordered or keep it at top?
-                                // "Left side provide module list/sort panel".
-                                // Let's allow everything to be reorderable for maximum flexibility as per "Module drag sort".
 
                                 return (
                                     <SectionWrapper
                                         key={sectionId}
                                         id={sectionId}
                                         title={title}
+                                        customTitle={customTitle}
+                                        onTitleChange={(value) => updateSectionTitle(sectionId, value)}
                                         isVisible={isVisible}
                                         onToggleVisibility={() => toggleVisibility(sectionId)}
                                     >

@@ -4,15 +4,29 @@ import { useLanguage } from '../../../i18n';
 import type { EducationItem } from '../../resume/types';
 import { Button } from '../../../components/ui/button';
 import { Input } from '../../../components/ui/input';
-import { Label } from '../../../components/ui/label';
 import { Textarea } from '../../../components/ui/textarea';
 import { Card, CardContent } from '../../../components/ui/card';
 import { Trash2, Plus } from 'lucide-react';
 import { v4 as uuidv4 } from 'uuid';
+import { EditableLabel } from '../../../components/ui/editable-label';
 
 export const EducationForm: React.FC = () => {
     const { resumeData, setResumeData } = useResume();
     const { t } = useLanguage();
+    const fieldLabels = resumeData.settings.fieldLabels || {};
+
+    const updateFieldLabel = (field: string, value: string) => {
+        setResumeData({
+            ...resumeData,
+            settings: {
+                ...resumeData.settings,
+                fieldLabels: {
+                    ...fieldLabels,
+                    [field]: value
+                }
+            }
+        });
+    };
 
     const handleAdd = () => {
         const newItem: EducationItem = {
@@ -60,32 +74,63 @@ export const EducationForm: React.FC = () => {
                     </Button>
                     <CardContent className="p-4 space-y-4">
                         <div className="space-y-2">
-                            <Label>{t.school}</Label>
-                            <Input value={item.school} onChange={(e) => updateItem(item.id, 'school', e.target.value)} placeholder="School Name" />
+                            <EditableLabel
+                                htmlFor={`school-${item.id}`}
+                                value={fieldLabels.school || ''}
+                                defaultValue={t.school}
+                                onChange={(v) => updateFieldLabel('school', v)}
+                            />
+                            <Input id={`school-${item.id}`} value={item.school} onChange={(e) => updateItem(item.id, 'school', e.target.value)} placeholder="School Name" />
                         </div>
                         <div className="grid grid-cols-2 gap-4">
                             <div className="space-y-2">
-                                <Label>{t.degree}</Label>
-                                <Input value={item.degree} onChange={(e) => updateItem(item.id, 'degree', e.target.value)} placeholder="Bachelor of Science" />
+                                <EditableLabel
+                                    htmlFor={`degree-${item.id}`}
+                                    value={fieldLabels.degree || ''}
+                                    defaultValue={t.degree}
+                                    onChange={(v) => updateFieldLabel('degree', v)}
+                                />
+                                <Input id={`degree-${item.id}`} value={item.degree} onChange={(e) => updateItem(item.id, 'degree', e.target.value)} placeholder="Bachelor of Science" />
                             </div>
                             <div className="space-y-2">
-                                <Label>{t.major}</Label>
-                                <Input value={item.major} onChange={(e) => updateItem(item.id, 'major', e.target.value)} placeholder="Computer Science" />
+                                <EditableLabel
+                                    htmlFor={`major-${item.id}`}
+                                    value={fieldLabels.major || ''}
+                                    defaultValue={t.major}
+                                    onChange={(v) => updateFieldLabel('major', v)}
+                                />
+                                <Input id={`major-${item.id}`} value={item.major} onChange={(e) => updateItem(item.id, 'major', e.target.value)} placeholder="Computer Science" />
                             </div>
                         </div>
                         <div className="grid grid-cols-2 gap-4">
                             <div className="space-y-2">
-                                <Label>{t.startDate}</Label>
-                                <Input type="month" value={item.start} onChange={(e) => updateItem(item.id, 'start', e.target.value)} />
+                                <EditableLabel
+                                    htmlFor={`start-${item.id}`}
+                                    value={fieldLabels.eduStart || ''}
+                                    defaultValue={t.startDate}
+                                    onChange={(v) => updateFieldLabel('eduStart', v)}
+                                />
+                                <Input id={`start-${item.id}`} type="month" value={item.start} onChange={(e) => updateItem(item.id, 'start', e.target.value)} />
                             </div>
                             <div className="space-y-2">
-                                <Label>{t.endDate}</Label>
-                                <Input type="month" value={item.end} onChange={(e) => updateItem(item.id, 'end', e.target.value)} />
+                                <EditableLabel
+                                    htmlFor={`end-${item.id}`}
+                                    value={fieldLabels.eduEnd || ''}
+                                    defaultValue={t.endDate}
+                                    onChange={(v) => updateFieldLabel('eduEnd', v)}
+                                />
+                                <Input id={`end-${item.id}`} type="month" value={item.end} onChange={(e) => updateItem(item.id, 'end', e.target.value)} />
                             </div>
                         </div>
                         <div className="space-y-2">
-                            <Label>{t.highlightsDistinctions}</Label>
+                            <EditableLabel
+                                htmlFor={`highlights-${item.id}`}
+                                value={fieldLabels.eduHighlights || ''}
+                                defaultValue={t.highlightsDistinctions}
+                                onChange={(v) => updateFieldLabel('eduHighlights', v)}
+                            />
                             <Textarea
+                                id={`highlights-${item.id}`}
                                 value={item.highlights.join('\n')}
                                 onChange={(e) => updateItem(item.id, 'highlights', e.target.value.split('\n'))}
                                 placeholder="• GPA 4.0..."

@@ -4,15 +4,29 @@ import { useLanguage } from '../../../i18n';
 import type { SkillGroup } from '../../resume/types';
 import { Button } from '../../../components/ui/button';
 import { Input } from '../../../components/ui/input';
-import { Label } from '../../../components/ui/label';
 import { Textarea } from '../../../components/ui/textarea';
 import { Card, CardContent } from '../../../components/ui/card';
 import { Trash2, Plus } from 'lucide-react';
 import { v4 as uuidv4 } from 'uuid';
+import { EditableLabel } from '../../../components/ui/editable-label';
 
 export const SkillsForm: React.FC = () => {
     const { resumeData, setResumeData } = useResume();
     const { t } = useLanguage();
+    const fieldLabels = resumeData.settings.fieldLabels || {};
+
+    const updateFieldLabel = (field: string, value: string) => {
+        setResumeData({
+            ...resumeData,
+            settings: {
+                ...resumeData.settings,
+                fieldLabels: {
+                    ...fieldLabels,
+                    [field]: value
+                }
+            }
+        });
+    };
 
     const handleAdd = () => {
         const newItem: SkillGroup = {
@@ -56,12 +70,23 @@ export const SkillsForm: React.FC = () => {
                     </Button>
                     <CardContent className="p-4 space-y-4">
                         <div className="space-y-2">
-                            <Label>{t.categoryName}</Label>
-                            <Input value={item.name} onChange={(e) => updateItem(item.id, 'name', e.target.value)} placeholder="Frontend, Backend, etc." />
+                            <EditableLabel
+                                htmlFor={`category-${item.id}`}
+                                value={fieldLabels.skillCategory || ''}
+                                defaultValue={t.categoryName}
+                                onChange={(v) => updateFieldLabel('skillCategory', v)}
+                            />
+                            <Input id={`category-${item.id}`} value={item.name} onChange={(e) => updateItem(item.id, 'name', e.target.value)} placeholder="Frontend, Backend, etc." />
                         </div>
                         <div className="space-y-2">
-                            <Label>{t.skillsCommaSeparated}</Label>
+                            <EditableLabel
+                                htmlFor={`skills-${item.id}`}
+                                value={fieldLabels.skillItems || ''}
+                                defaultValue={t.skillsCommaSeparated}
+                                onChange={(v) => updateFieldLabel('skillItems', v)}
+                            />
                             <Textarea
+                                id={`skills-${item.id}`}
                                 value={item.items.join(', ')}
                                 onChange={(e) => updateItem(item.id, 'items', e.target.value.split(',').map(s => s.trim()))}
                                 placeholder="React, TypeScript, CSS..."

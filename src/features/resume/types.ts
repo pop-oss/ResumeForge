@@ -68,6 +68,56 @@ export interface CustomSection {
 
 export type TemplateType = 'classic' | 'modern' | 'minimal' | 'elegant' | 'creative' | 'professional' | 'executive' | 'tech';
 
+// 自定义字段标签
+export interface FieldLabels {
+    // Section 标题
+    sectionBasics?: string;      // 基本信息
+    sectionSummary?: string;     // 个人简介
+    sectionExperience?: string;  // 工作经历
+    sectionEducation?: string;   // 教育背景
+    sectionProjects?: string;    // 项目经历
+    sectionSkills?: string;      // 专业技能
+    sectionCustom?: string;      // 自定义模块
+    
+    // 基本信息字段
+    name?: string;        // 姓名
+    title?: string;       // 职位/求职意向
+    email?: string;       // 邮箱
+    phone?: string;       // 电话
+    city?: string;        // 所在地
+    website?: string;     // 个人网站
+    github?: string;      // GitHub
+    linkedin?: string;    // LinkedIn
+    
+    // 个人简介字段
+    summary?: string;     // 个人简介
+    
+    // 教育背景字段
+    school?: string;      // 学校
+    major?: string;       // 专业
+    degree?: string;      // 学位
+    eduStart?: string;    // 开始时间
+    eduEnd?: string;      // 结束时间
+    eduHighlights?: string; // 荣誉/成就
+    
+    // 工作经历字段
+    company?: string;     // 公司
+    role?: string;        // 职位
+    expStart?: string;    // 开始时间
+    expEnd?: string;      // 结束时间
+    expHighlights?: string; // 工作内容
+    
+    // 项目经历字段
+    projectName?: string; // 项目名称
+    projectLink?: string; // 项目链接
+    techStack?: string;   // 技术栈
+    projectHighlights?: string; // 项目描述
+    
+    // 技能字段
+    skillCategory?: string; // 技能分类
+    skillItems?: string;    // 技能项
+}
+
 export interface ResumeSettings {
     template: TemplateType;
     themeColor: string;
@@ -75,6 +125,8 @@ export interface ResumeSettings {
     lineHeight: number; // 1.2, 1.5, etc.
     sectionVisibility: SectionVisibility;
     sectionOrder: SectionOrder;
+    fieldLabels?: FieldLabels; // 自定义字段标签
+    editMode?: boolean; // 编辑模式
 }
 
 export interface ResumeData {

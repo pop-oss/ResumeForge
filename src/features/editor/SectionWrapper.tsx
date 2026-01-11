@@ -5,10 +5,13 @@ import { ChevronDown, ChevronUp, GripVertical, Eye, EyeOff } from 'lucide-react'
 import { cn } from '../../lib/utils';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
+import { EditableSectionTitle } from '../../components/ui/editable-label';
 
 interface SectionWrapperProps {
     id: string;
     title: string;
+    customTitle?: string;
+    onTitleChange?: (value: string) => void;
     isVisible: boolean;
     onToggleVisibility?: () => void;
     children: React.ReactNode;
@@ -18,6 +21,8 @@ interface SectionWrapperProps {
 export const SectionWrapper: React.FC<SectionWrapperProps> = ({
     id,
     title,
+    customTitle,
+    onTitleChange,
     isVisible,
     onToggleVisibility,
     children,
@@ -50,12 +55,20 @@ export const SectionWrapper: React.FC<SectionWrapperProps> = ({
                                 <GripVertical className="h-4 w-4 text-muted-foreground" />
                             </Button>
                         )}
-                        <button
-                            onClick={() => setIsOpen(!isOpen)}
-                            className="font-semibold text-sm flex items-center gap-2 hover:underline focus:outline-none"
-                        >
-                            {title}
-                        </button>
+                        {onTitleChange ? (
+                            <EditableSectionTitle
+                                value={customTitle || ''}
+                                defaultValue={title}
+                                onChange={onTitleChange}
+                            />
+                        ) : (
+                            <button
+                                onClick={() => setIsOpen(!isOpen)}
+                                className="font-semibold text-sm flex items-center gap-2 hover:underline focus:outline-none"
+                            >
+                                {title}
+                            </button>
+                        )}
                     </div>
                     <div className="flex items-center gap-1">
                         {onToggleVisibility && (

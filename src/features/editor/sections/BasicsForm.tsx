@@ -3,17 +3,31 @@ import { useResume } from '../../resume/ResumeContext';
 import { useLanguage } from '../../../i18n';
 import { Input } from '../../../components/ui/input';
 import { Label } from '../../../components/ui/label';
-import { Button } from '../../../components/ui/button';
 import { X, Upload } from 'lucide-react';
+import { EditableLabel } from '../../../components/ui/editable-label';
 
 export const BasicsForm: React.FC = () => {
-    const { resumeData, updateBasics } = useResume();
+    const { resumeData, updateBasics, setResumeData } = useResume();
     const { t } = useLanguage();
-    const { basics } = resumeData;
+    const { basics, settings } = resumeData;
+    const fieldLabels = settings.fieldLabels || {};
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
         updateBasics({ [name]: value });
+    };
+
+    const updateFieldLabel = (field: string, value: string) => {
+        setResumeData({
+            ...resumeData,
+            settings: {
+                ...settings,
+                fieldLabels: {
+                    ...fieldLabels,
+                    [field]: value
+                }
+            }
+        });
     };
 
     const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -35,28 +49,53 @@ export const BasicsForm: React.FC = () => {
         <div className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                    <Label htmlFor="name">{t.fullName}</Label>
+                    <EditableLabel
+                        htmlFor="name"
+                        value={fieldLabels.name || ''}
+                        defaultValue={t.fullName}
+                        onChange={(v) => updateFieldLabel('name', v)}
+                    />
                     <Input id="name" name="name" value={basics.name} onChange={handleChange} placeholder="John Doe" />
                 </div>
                 <div className="space-y-2">
-                    <Label htmlFor="title">{t.jobTitle}</Label>
+                    <EditableLabel
+                        htmlFor="title"
+                        value={fieldLabels.title || ''}
+                        defaultValue={t.jobTitle}
+                        onChange={(v) => updateFieldLabel('title', v)}
+                    />
                     <Input id="title" name="title" value={basics.title} onChange={handleChange} placeholder="Frontend Engineer" />
                 </div>
             </div>
 
             <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                    <Label htmlFor="email">{t.email}</Label>
+                    <EditableLabel
+                        htmlFor="email"
+                        value={fieldLabels.email || ''}
+                        defaultValue={t.email}
+                        onChange={(v) => updateFieldLabel('email', v)}
+                    />
                     <Input id="email" name="email" value={basics.email} onChange={handleChange} placeholder="john@example.com" />
                 </div>
                 <div className="space-y-2">
-                    <Label htmlFor="phone">{t.phone}</Label>
+                    <EditableLabel
+                        htmlFor="phone"
+                        value={fieldLabels.phone || ''}
+                        defaultValue={t.phone}
+                        onChange={(v) => updateFieldLabel('phone', v)}
+                    />
                     <Input id="phone" name="phone" value={basics.phone} onChange={handleChange} placeholder="+1 (555) 000-0000" />
                 </div>
             </div>
 
             <div className="space-y-2">
-                <Label htmlFor="city">{t.location}</Label>
+                <EditableLabel
+                    htmlFor="city"
+                    value={fieldLabels.city || ''}
+                    defaultValue={t.location}
+                    onChange={(v) => updateFieldLabel('city', v)}
+                />
                 <Input id="city" name="city" value={basics.city} onChange={handleChange} placeholder="San Francisco, CA" />
             </div>
 
@@ -100,15 +139,30 @@ export const BasicsForm: React.FC = () => {
 
             <div className="grid grid-cols-3 gap-4">
                 <div className="space-y-2">
-                    <Label htmlFor="website">{t.website}</Label>
+                    <EditableLabel
+                        htmlFor="website"
+                        value={fieldLabels.website || ''}
+                        defaultValue={t.website}
+                        onChange={(v) => updateFieldLabel('website', v)}
+                    />
                     <Input id="website" name="website" value={basics.website || ''} onChange={handleChange} placeholder="johndoe.com" />
                 </div>
                 <div className="space-y-2">
-                    <Label htmlFor="github">GitHub</Label>
+                    <EditableLabel
+                        htmlFor="github"
+                        value={fieldLabels.github || ''}
+                        defaultValue="GitHub"
+                        onChange={(v) => updateFieldLabel('github', v)}
+                    />
                     <Input id="github" name="github" value={basics.github || ''} onChange={handleChange} placeholder="github.com/john" />
                 </div>
                 <div className="space-y-2">
-                    <Label htmlFor="linkedin">LinkedIn</Label>
+                    <EditableLabel
+                        htmlFor="linkedin"
+                        value={fieldLabels.linkedin || ''}
+                        defaultValue="LinkedIn"
+                        onChange={(v) => updateFieldLabel('linkedin', v)}
+                    />
                     <Input id="linkedin" name="linkedin" value={basics.linkedin || ''} onChange={handleChange} placeholder="linkedin.com/in/john" />
                 </div>
             </div>

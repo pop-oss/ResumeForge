@@ -2,6 +2,23 @@ import React from 'react';
 import type { ResumeData } from '../../resume/types';
 import { useLanguage } from '../../../i18n';
 import { ExternalLink } from '../../../components/ui/linkify';
+import { useResume } from '../../resume/ResumeContext';
+import {
+    DndContext,
+    closestCenter,
+    KeyboardSensor,
+    PointerSensor,
+    useSensor,
+    useSensors,
+    type DragEndEvent
+} from '@dnd-kit/core';
+import {
+    arrayMove,
+    SortableContext,
+    sortableKeyboardCoordinates,
+    verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
+import { DraggablePreviewSection } from '../components/DraggablePreviewSection';
 
 interface TemplateProps {
     data: ResumeData;
@@ -9,8 +26,30 @@ interface TemplateProps {
 
 export const ClassicTemplate: React.FC<TemplateProps> = ({ data }) => {
     const { basics, summary, experience, education, projects, skills, custom, settings } = data;
-    const { themeColor, sectionOrder, sectionVisibility = {} } = settings;
+    const { themeColor, sectionOrder, sectionVisibility = {}, editMode } = settings;
     const { t } = useLanguage();
+    const { reorderSections } = useResume();
+
+    const sensors = useSensors(
+        useSensor(PointerSensor, {
+            activationConstraint: {
+                distance: 8,
+            },
+        }),
+        useSensor(KeyboardSensor, {
+            coordinateGetter: sortableKeyboardCoordinates,
+        })
+    );
+
+    const handleDragEnd = (event: DragEndEvent) => {
+        const { active, over } = event;
+
+        if (active.id !== over?.id) {
+            const oldIndex = sectionOrder.indexOf(active.id as string);
+            const newIndex = sectionOrder.indexOf(over?.id as string);
+            reorderSections(arrayMove(sectionOrder, oldIndex, newIndex));
+        }
+    };
 
     const sectionRenderers: Record<string, React.ReactNode> = {
         basics: (
@@ -167,26 +206,54 @@ export const ClassicTemplate: React.FC<TemplateProps> = ({ data }) => {
         ),
     };
 
-    // Ensure basics is top if not in order (though editor handles order, logic here should respect it)
-    // But usually basics is Header. If 'basics' is in sectionOrder, render it there? 
-    // Standard resume has header at top always. 
-    // Let's filter out 'basics' from draggable order loop and always put it top, 
-    // OR allow it to be placed anywhere?
-    // User Prompt: "Modules draggable (At least: Work... Skills)". Doesn't explicitly say Basics is draggable.
-    // Standard behavior: Header is fixed. 
-    // Let's keep Header fixed at top for classic template.
+    // 可拖拽的 section 列表（不包括 basics）
+    const draggableSections = sectionOrder.filter(id => id !== 'basics');
 
-    return (
-        <div className="font-sans text-gray-800 p-1">
-            {sectionRenderers.basics}
-            {sectionOrder.filter(id => id !== 'basics').map(sectionId => {
+    const renderSections = () => {
+        if (!editMode) {
+            // 非编辑模式，直接渲染
+            return draggableSections.map(sectionId => {
                 if (sectionVisibility[sectionId] === false) return null;
                 return (
                     <div key={sectionId}>
                         {sectionRenderers[sectionId]}
                     </div>
                 );
-            })}
+            });
+        }
+
+        // 编辑模式，支持拖拽
+        return (
+            <DndContext
+                sensors={sensors}
+                collisionDetection={closestCenter}
+                onDragEnd={handleDragEnd}
+            >
+                <SortableContext
+                    items={draggableSections}
+                    strategy={verticalListSortingStrategy}
+                >
+                    {draggableSections.map(sectionId => {
+                        if (sectionVisibility[sectionId] === false) return null;
+                        return (
+                            <DraggablePreviewSection
+                                key={sectionId}
+                                id={sectionId}
+                                editMode={editMode}
+                            >
+                                {sectionRenderers[sectionId]}
+                            </DraggablePreviewSection>
+                        );
+                    })}
+                </SortableContext>
+            </DndContext>
+        );
+    };
+
+    return (
+        <div className="font-sans text-gray-800 p-1">
+            {sectionRenderers.basics}
+            {renderSections()}
         </div>
     );
 };
