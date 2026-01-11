@@ -20,7 +20,7 @@ export function useEditMode(): UseEditModeReturn {
   };
 
   return {
-    editMode: resumeData.settings.editMode,
+    editMode: resumeData.settings.editMode ?? false,
     toggleEditMode,
     setEditMode,
   };

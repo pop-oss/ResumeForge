@@ -91,7 +91,7 @@ export const EditableField: React.FC<EditableFieldProps> = ({
         {/* Visibility Toggle */}
         <FieldVisibilityToggle
           fieldId={fieldId}
-          sectionId={sectionId}
+          sectionId={sectionId as string}
           visible={visible}
           onToggle={handleVisibilityToggle}
           className="opacity-0 group-hover/field:opacity-100 transition-opacity"

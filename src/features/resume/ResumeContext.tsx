@@ -1,8 +1,10 @@
 import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
-import type { ResumeData, SectionOrder, ResumeSettings, ResumeBasics, ElementPosition } from './types';
+import type { ResumeData, SectionOrder, ResumeSettings, ResumeBasics, ElementPosition, FieldOrderConfig, FieldVisibilityConfig } from './types';
 import { initialResumeData } from './data';
 
-interface ResumeContextType {
+type SectionId = keyof FieldOrderConfig;
+
+export interface ResumeContextType {
     resumeData: ResumeData;
     setResumeData: (data: ResumeData) => void;
     updateBasics: (basics: Partial<ResumeBasics>) => void;
@@ -10,7 +12,9 @@ interface ResumeContextType {
     reorderSections: (order: SectionOrder) => void;
     resetResume: () => void;
     updateElementPosition: (elementId: string, position: ElementPosition) => void;
-    // Generic update/delete helpers could be added here or implemented in components
+    toggleEditMode: () => void;
+    updateFieldOrder: (sectionId: SectionId, fieldOrder: string[]) => void;
+    updateFieldVisibility: (sectionId: SectionId, fieldId: string, visible: boolean) => void;
 }
 
 const ResumeContext = createContext<ResumeContextType | undefined>(undefined);
@@ -82,6 +86,45 @@ export const ResumeProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         }));
     }, []);
 
+    const toggleEditMode = useCallback(() => {
+        setResumeState(prev => ({
+            ...prev,
+            settings: {
+                ...prev.settings,
+                editMode: !prev.settings.editMode,
+            },
+        }));
+    }, []);
+
+    const updateFieldOrder = useCallback((sectionId: SectionId, fieldOrder: string[]) => {
+        setResumeState(prev => ({
+            ...prev,
+            settings: {
+                ...prev.settings,
+                fieldOrder: {
+                    ...prev.settings.fieldOrder,
+                    [sectionId]: fieldOrder,
+                },
+            },
+        }));
+    }, []);
+
+    const updateFieldVisibility = useCallback((sectionId: SectionId, fieldId: string, visible: boolean) => {
+        setResumeState(prev => ({
+            ...prev,
+            settings: {
+                ...prev.settings,
+                fieldVisibility: {
+                    ...prev.settings.fieldVisibility,
+                    [sectionId]: {
+                        ...(prev.settings.fieldVisibility?.[sectionId] || {}),
+                        [fieldId]: visible,
+                    },
+                },
+            },
+        }));
+    }, []);
+
     return (
         <ResumeContext.Provider
             value={{
@@ -92,6 +135,9 @@ export const ResumeProvider: React.FC<{ children: React.ReactNode }> = ({ childr
                 reorderSections,
                 resetResume,
                 updateElementPosition,
+                toggleEditMode,
+                updateFieldOrder,
+                updateFieldVisibility,
             }}
         >
             {children}

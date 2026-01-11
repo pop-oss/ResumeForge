@@ -42,7 +42,10 @@ export const EditableSection: React.FC<EditableSectionProps> = ({
   className,
 }) => {
   const { resumeData, updateFieldOrder } = useResume();
-  const { fieldOrder, fieldVisibility, editMode } = resumeData.settings;
+  const settings = resumeData.settings;
+  const editMode = settings.editMode ?? false;
+  const fieldOrder = settings.fieldOrder ?? {} as FieldOrderConfig;
+  const fieldVisibility = settings.fieldVisibility ?? {} as Record<SectionId, Record<string, boolean>>;
 
   const sensors = useSensors(
     useSensor(PointerSensor, {

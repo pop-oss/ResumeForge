@@ -131,6 +131,28 @@ export type ElementPositions = Record<string, ElementPosition>;
 // key 格式: "sectionId:itemId" 例如 "education:edu-1"
 export type ItemFieldOrder = Record<string, string[]>;
 
+// 字段排序配置 - 每个 section 的字段顺序
+export interface FieldOrderConfig {
+    basics?: string[];
+    summary?: string[];
+    experience?: string[];
+    education?: string[];
+    projects?: string[];
+    skills?: string[];
+    custom?: string[];
+}
+
+// 字段可见性配置 - 每个 section 的字段可见性
+export interface FieldVisibilityConfig {
+    basics?: Record<string, boolean>;
+    summary?: Record<string, boolean>;
+    experience?: Record<string, boolean>;
+    education?: Record<string, boolean>;
+    projects?: Record<string, boolean>;
+    skills?: Record<string, boolean>;
+    custom?: Record<string, boolean>;
+}
+
 export interface ResumeSettings {
     template: TemplateType;
     themeColor: string;
@@ -142,6 +164,8 @@ export interface ResumeSettings {
     editMode?: boolean; // 编辑模式
     elementPositions?: ElementPositions; // 元素自由拖拽位置
     itemFieldOrder?: ItemFieldOrder; // 模块内字段排序
+    fieldOrder?: FieldOrderConfig; // 字段排序配置
+    fieldVisibility?: FieldVisibilityConfig; // 字段可见性配置
 }
 
 export interface ResumeData {

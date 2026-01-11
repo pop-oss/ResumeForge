@@ -147,8 +147,8 @@ export const Header: React.FC<HeaderProps> = ({ zoom, setZoom }) => {
         
         // 像素转换比例 (96 DPI)
         const MM_TO_PX = 3.7795275591;
-        const A4_WIDTH_PX = A4_WIDTH_MM * MM_TO_PX;
-        const A4_HEIGHT_PX = A4_HEIGHT_MM * MM_TO_PX;
+        // 保留用于未来可能的精确像素计算
+        void MM_TO_PX;
 
         // 保存当前状态，导出时临时重置
         const wasEditMode = resumeData.settings.editMode;
