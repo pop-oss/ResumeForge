@@ -202,7 +202,7 @@ export const ClassicTemplate: React.FC<TemplateProps> = ({ data }) => {
                                     <span className="text-xs text-gray-500">{exp.city}</span>
                                 </div>
                             </FreeDraggable>
-                            <ul className="list-disc list-outside ml-4 text-sm space-y-1 text-gray-700">
+                            <div className="ml-4 text-sm space-y-1 text-gray-700">
                                 {exp.highlights.filter(h => h.trim()).map((h, i) => (
                                     <FreeDraggable
                                         key={i}
@@ -211,10 +211,13 @@ export const ClassicTemplate: React.FC<TemplateProps> = ({ data }) => {
                                         onPositionChange={handlePositionChange}
                                         editMode={editMode}
                                     >
-                                        <li className="leading-snug">{h}</li>
+                                        <div className="flex items-start">
+                                            <span className="mr-2">•</span>
+                                            <span className="leading-snug">{h}</span>
+                                        </div>
                                     </FreeDraggable>
                                 ))}
-                            </ul>
+                            </div>
                         </div>
                     ))}
                 </div>
@@ -250,7 +253,7 @@ export const ClassicTemplate: React.FC<TemplateProps> = ({ data }) => {
                                 </div>
                             </FreeDraggable>
                             {edu.highlights.length > 0 && (
-                                <ul className="list-disc list-outside ml-4 text-sm space-y-1 text-gray-700 mt-1">
+                                <div className="ml-4 text-sm space-y-1 text-gray-700 mt-1">
                                     {edu.highlights.filter(h => h.trim()).map((h, i) => (
                                         <FreeDraggable
                                             key={i}
@@ -259,10 +262,13 @@ export const ClassicTemplate: React.FC<TemplateProps> = ({ data }) => {
                                             onPositionChange={handlePositionChange}
                                             editMode={editMode}
                                         >
-                                            <li>{h}</li>
+                                            <div className="flex items-start">
+                                                <span className="mr-2">•</span>
+                                                <span>{h}</span>
+                                            </div>
                                         </FreeDraggable>
                                     ))}
-                                </ul>
+                                </div>
                             )}
                         </div>
                     ))}
@@ -300,7 +306,7 @@ export const ClassicTemplate: React.FC<TemplateProps> = ({ data }) => {
                                     </div>
                                 </FreeDraggable>
                             )}
-                            <ul className="list-disc list-outside ml-4 text-sm space-y-1 text-gray-700">
+                            <div className="ml-4 text-sm space-y-1 text-gray-700">
                                 {proj.highlights.filter(h => h.trim()).map((h, i) => (
                                     <FreeDraggable
                                         key={i}
@@ -309,10 +315,13 @@ export const ClassicTemplate: React.FC<TemplateProps> = ({ data }) => {
                                         onPositionChange={handlePositionChange}
                                         editMode={editMode}
                                     >
-                                        <li className="leading-snug">{h}</li>
+                                        <div className="flex items-start">
+                                            <span className="mr-2">•</span>
+                                            <span className="leading-snug">{h}</span>
+                                        </div>
                                     </FreeDraggable>
                                 ))}
-                            </ul>
+                            </div>
                         </div>
                     ))}
                 </div>
@@ -372,7 +381,7 @@ export const ClassicTemplate: React.FC<TemplateProps> = ({ data }) => {
                                         </FreeDraggable>
                                     )}
                                     {item.items.length > 0 && (
-                                        <ul className="list-disc list-outside ml-4 text-sm space-y-1 text-gray-700">
+                                        <div className="ml-4 text-sm space-y-1 text-gray-700">
                                             {item.items.filter(i => i.trim()).map((i, idx) => (
                                                 <FreeDraggable
                                                     key={idx}
@@ -381,10 +390,13 @@ export const ClassicTemplate: React.FC<TemplateProps> = ({ data }) => {
                                                     onPositionChange={handlePositionChange}
                                                     editMode={editMode}
                                                 >
-                                                    <li className="leading-snug">{i}</li>
+                                                    <div className="flex items-start">
+                                                        <span className="mr-2">•</span>
+                                                        <span className="leading-snug">{i}</span>
+                                                    </div>
                                                 </FreeDraggable>
                                             ))}
-                                        </ul>
+                                        </div>
                                     )}
                                 </div>
                             ))}

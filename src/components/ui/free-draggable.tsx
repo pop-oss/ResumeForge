@@ -11,8 +11,8 @@ export interface FreeDraggableProps {
   disabled?: boolean;
   editMode?: boolean;
   className?: string;
-  snapX?: number; // 水平吸附网格，默认 8px
-  snapY?: number; // 垂直吸附网格，默认 24px（约一行高度）
+  snapX?: number;
+  snapY?: number;
 }
 
 export const FreeDraggable: React.FC<FreeDraggableProps> = ({
@@ -24,7 +24,7 @@ export const FreeDraggable: React.FC<FreeDraggableProps> = ({
   editMode = true,
   className = "",
   snapX = 8,
-  snapY = 24, // 默认吸附到行高
+  snapY = 24,
 }) => {
   const [isDragging, setIsDragging] = useState(false);
   const [currentPos, setCurrentPos] = useState(position);
@@ -32,21 +32,17 @@ export const FreeDraggable: React.FC<FreeDraggableProps> = ({
   const startPosRef = useRef({ x: 0, y: 0 });
   const startMouseRef = useRef({ x: 0, y: 0 });
 
-  // 同步外部位置变化
   useEffect(() => {
     setCurrentPos(position);
   }, [position.x, position.y]);
 
-  // 吸附到网格
-  const snapToGridValue = useCallback((value: number, gridSize: number) => {
+  const snapToGrid = useCallback((value: number, gridSize: number) => {
     if (gridSize <= 0) return value;
     return Math.round(value / gridSize) * gridSize;
   }, []);
 
   const handleMouseDown = useCallback((e: React.MouseEvent) => {
     if (disabled || !editMode) return;
-    
-    // 只响应拖拽手柄的点击
     if (!(e.target as HTMLElement).closest('.drag-handle')) return;
     
     e.preventDefault();
@@ -63,24 +59,21 @@ export const FreeDraggable: React.FC<FreeDraggableProps> = ({
     const deltaX = e.clientX - startMouseRef.current.x;
     const deltaY = e.clientY - startMouseRef.current.y;
     
-    const newX = snapToGridValue(startPosRef.current.x + deltaX, snapX);
-    const newY = snapToGridValue(startPosRef.current.y + deltaY, snapY);
+    const newX = snapToGrid(startPosRef.current.x + deltaX, snapX);
+    const newY = snapToGrid(startPosRef.current.y + deltaY, snapY);
     
     setCurrentPos({ x: newX, y: newY });
-  }, [isDragging, snapToGridValue, snapX, snapY]);
+  }, [isDragging, snapToGrid, snapX, snapY]);
 
   const handleMouseUp = useCallback(() => {
     if (!isDragging) return;
-    
     setIsDragging(false);
     
-    // 只有位置真正改变时才触发回调
     if (currentPos.x !== position.x || currentPos.y !== position.y) {
       onPositionChange?.(id, currentPos);
     }
   }, [isDragging, currentPos, position, id, onPositionChange]);
 
-  // 全局鼠标事件监听
   useEffect(() => {
     if (isDragging) {
       window.addEventListener('mousemove', handleMouseMove);
@@ -92,15 +85,21 @@ export const FreeDraggable: React.FC<FreeDraggableProps> = ({
     }
   }, [isDragging, handleMouseMove, handleMouseUp]);
 
-  // 非编辑模式，直接渲染
+  const hasOffset = currentPos.x !== 0 || currentPos.y !== 0;
+
+  // 使用 margin 来调整位置，这样会影响文档流，不会留空白
+  const offsetStyle: React.CSSProperties = hasOffset ? {
+    marginLeft: currentPos.x,
+    marginTop: currentPos.y,
+    // 负的 margin-bottom 来补偿向下移动造成的额外空间
+    marginBottom: currentPos.y < 0 ? Math.abs(currentPos.y) : -currentPos.y,
+  } : {};
+
+  // 非编辑模式，只应用位置偏移
   if (!editMode) {
+    if (!hasOffset) return <>{children}</>;
     return (
-      <div 
-        className={className}
-        style={{
-          transform: `translate(${currentPos.x}px, ${currentPos.y}px)`,
-        }}
-      >
+      <div className={className} style={offsetStyle}>
         {children}
       </div>
     );
@@ -112,16 +111,15 @@ export const FreeDraggable: React.FC<FreeDraggableProps> = ({
       className={cn(
         "group relative",
         isDragging && "z-50 opacity-80",
-        editMode && "hover:outline hover:outline-1 hover:outline-blue-300 hover:outline-dashed",
+        editMode && "hover:outline hover:outline-1 hover:outline-blue-300 hover:outline-dashed rounded",
         className
       )}
       style={{
-        transform: `translate(${currentPos.x}px, ${currentPos.y}px)`,
+        ...offsetStyle,
         cursor: isDragging ? 'grabbing' : 'default',
       }}
       onMouseDown={handleMouseDown}
     >
-      {/* 拖拽手柄 */}
       {!disabled && (
         <button
           type="button"
@@ -129,10 +127,9 @@ export const FreeDraggable: React.FC<FreeDraggableProps> = ({
             "drag-handle absolute -left-5 top-0 p-0.5 rounded cursor-grab",
             "opacity-0 group-hover:opacity-100 transition-opacity",
             "hover:bg-blue-100 text-blue-500",
-            "focus:outline-none focus:ring-2 focus:ring-blue-500",
+            "focus:outline-none",
             isDragging && "cursor-grabbing opacity-100 bg-blue-100"
           )}
-          aria-label={`拖拽移动 ${id}`}
         >
           <Move className="h-3 w-3" />
         </button>

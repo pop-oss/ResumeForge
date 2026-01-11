@@ -118,15 +118,18 @@ export interface FieldLabels {
     skillItems?: string;    // 技能项
 }
 
-// 元素位置信息（自由拖拽）
+// 元素位置信息（自由拖拽）- 保留用于特殊场景
 export interface ElementPosition {
     x: number;
     y: number;
 }
 
 // 存储所有元素的位置
-// key 格式: "sectionId:itemId:fieldId" 或 "sectionId:fieldId"
 export type ElementPositions = Record<string, ElementPosition>;
+
+// 模块内字段排序
+// key 格式: "sectionId:itemId" 例如 "education:edu-1"
+export type ItemFieldOrder = Record<string, string[]>;
 
 export interface ResumeSettings {
     template: TemplateType;
@@ -138,6 +141,7 @@ export interface ResumeSettings {
     fieldLabels?: FieldLabels; // 自定义字段标签
     editMode?: boolean; // 编辑模式
     elementPositions?: ElementPositions; // 元素自由拖拽位置
+    itemFieldOrder?: ItemFieldOrder; // 模块内字段排序
 }
 
 export interface ResumeData {
