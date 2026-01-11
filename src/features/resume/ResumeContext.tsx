@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
-import type { ResumeData, SectionOrder, ResumeSettings, ResumeBasics } from './types';
+import type { ResumeData, SectionOrder, ResumeSettings, ResumeBasics, ElementPosition } from './types';
 import { initialResumeData } from './data';
 
 interface ResumeContextType {
@@ -9,6 +9,7 @@ interface ResumeContextType {
     updateSettings: (settings: Partial<ResumeSettings>) => void;
     reorderSections: (order: SectionOrder) => void;
     resetResume: () => void;
+    updateElementPosition: (elementId: string, position: ElementPosition) => void;
     // Generic update/delete helpers could be added here or implemented in components
 }
 
@@ -68,6 +69,19 @@ export const ResumeProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         localStorage.removeItem(STORAGE_KEY);
     }, []);
 
+    const updateElementPosition = useCallback((elementId: string, position: ElementPosition) => {
+        setResumeState(prev => ({
+            ...prev,
+            settings: {
+                ...prev.settings,
+                elementPositions: {
+                    ...prev.settings.elementPositions,
+                    [elementId]: position,
+                },
+            },
+        }));
+    }, []);
+
     return (
         <ResumeContext.Provider
             value={{
@@ -77,6 +91,7 @@ export const ResumeProvider: React.FC<{ children: React.ReactNode }> = ({ childr
                 updateSettings,
                 reorderSections,
                 resetResume,
+                updateElementPosition,
             }}
         >
             {children}
