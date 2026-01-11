@@ -1,13 +1,14 @@
 import React from 'react';
 import type { ResumeData } from '../../resume/types';
 import { useLanguage } from '../../../i18n';
+import { ExternalLink } from '../../../components/ui/linkify';
 
 interface TemplateProps {
     data: ResumeData;
 }
 
 export const ExecutiveTemplate: React.FC<TemplateProps> = ({ data }) => {
-    const { basics, summary, experience, education, projects, skills, settings } = data;
+    const { basics, summary, experience, education, projects, skills, custom, settings } = data;
     const { themeColor, sectionOrder, sectionVisibility = {} } = settings;
     const { t } = useLanguage();
 
@@ -26,8 +27,8 @@ export const ExecutiveTemplate: React.FC<TemplateProps> = ({ data }) => {
                     <p className="text-lg uppercase tracking-[0.2em] text-gray-500 font-light">{basics.title}</p>
                 </div>
                 <div className="flex justify-center gap-8 mt-6 text-sm text-gray-600">
-                    {basics.email && <span>{basics.email}</span>}
-                    {basics.phone && <span>{basics.phone}</span>}
+                    {basics.email && <a href={`mailto:${basics.email}`} className="hover:underline">{basics.email}</a>}
+                    {basics.phone && <a href={`tel:${basics.phone}`} className="hover:underline">{basics.phone}</a>}
                     {basics.city && <span>{basics.city}</span>}
                 </div>
             </div>
@@ -125,7 +126,41 @@ export const ExecutiveTemplate: React.FC<TemplateProps> = ({ data }) => {
                 </div>
             </div>
         ),
-        custom: null,
+        custom: custom.length > 0 && (
+            <>
+                {custom.map(section => (
+                    <div key={section.id} className="mb-8">
+                        <div className="flex items-center gap-4 mb-6">
+                            <div className="flex-1 h-px bg-gray-200"></div>
+                            <h2 className="text-sm font-bold uppercase tracking-[0.2em]" style={{ color: themeColor }}>{section.title}</h2>
+                            <div className="flex-1 h-px bg-gray-200"></div>
+                        </div>
+                        <div className="space-y-4">
+                            {section.items.map(item => (
+                                <div key={item.id} className="flex gap-4 items-start">
+                                    <div className="w-2 h-2 rounded-full mt-2 shrink-0" style={{ backgroundColor: themeColor }}></div>
+                                    <div>
+                                        <div className="flex items-center gap-2">
+                                            <h3 className="font-bold text-gray-900">{item.title}</h3>
+                                            {item.link && <ExternalLink href={item.link} className="text-xs text-blue-600 hover:underline" />}
+                                        </div>
+                                        {item.subtitle && <p className="text-sm" style={{ color: themeColor }}>{item.subtitle}</p>}
+                                        {item.date && <p className="text-xs text-gray-400 mb-1">{item.date}</p>}
+                                        {item.items.length > 0 && (
+                                            <ul className="text-sm text-gray-600 space-y-1 mt-1">
+                                                {item.items.filter(i => i.trim()).map((i, idx) => (
+                                                    <li key={idx}>{i}</li>
+                                                ))}
+                                            </ul>
+                                        )}
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                ))}
+            </>
+        ),
     };
 
     return (

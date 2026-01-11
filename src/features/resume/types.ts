@@ -56,6 +56,7 @@ export interface CustomSectionItem {
     title: string;
     subtitle?: string;
     date?: string;
+    link?: string;
     items: string[];
 }
 

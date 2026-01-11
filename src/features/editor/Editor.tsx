@@ -24,6 +24,7 @@ import { ExperienceForm } from './sections/ExperienceForm';
 import { EducationForm } from './sections/EducationForm';
 import { ProjectsForm } from './sections/ProjectsForm';
 import { SkillsForm } from './sections/SkillsForm';
+import { CustomForm } from './sections/CustomForm';
 
 const SECTION_COMPONENTS: Record<string, React.FC> = {
     basics: BasicsForm,
@@ -32,7 +33,7 @@ const SECTION_COMPONENTS: Record<string, React.FC> = {
     education: EducationForm,
     projects: ProjectsForm,
     skills: SkillsForm,
-    custom: () => <div>Custom Sections Coming Soon</div>,
+    custom: CustomForm,
 };
 
 export const Editor: React.FC = () => {
@@ -47,7 +48,7 @@ export const Editor: React.FC = () => {
         education: t.education,
         projects: t.projects,
         skills: t.skills,
-        custom: 'Custom',
+        custom: t.custom,
     };
 
     const sensors = useSensors(

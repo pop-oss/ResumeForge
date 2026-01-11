@@ -1,13 +1,14 @@
 import React from 'react';
 import type { ResumeData } from '../../resume/types';
 import { useLanguage } from '../../../i18n';
+import { ExternalLink } from '../../../components/ui/linkify';
 
 interface TemplateProps {
     data: ResumeData;
 }
 
 export const ElegantTemplate: React.FC<TemplateProps> = ({ data }) => {
-    const { basics, summary, experience, education, projects, skills, settings } = data;
+    const { basics, summary, experience, education, projects, skills, custom, settings } = data;
     const { themeColor, sectionOrder, sectionVisibility = {} } = settings;
     const { t } = useLanguage();
 
@@ -24,11 +25,11 @@ export const ElegantTemplate: React.FC<TemplateProps> = ({ data }) => {
                 <h1 className="text-5xl font-serif text-slate-800 mb-2">{basics.name}</h1>
                 <p className="text-xl text-slate-600 font-light mb-4 italic">{basics.title}</p>
                 <div className="flex justify-center flex-wrap gap-x-6 gap-y-2 text-sm text-slate-500 font-serif">
-                    {basics.email && <span>{basics.email}</span>}
-                    {basics.phone && <span>{basics.phone}</span>}
+                    {basics.email && <a href={`mailto:${basics.email}`} className="hover:underline">{basics.email}</a>}
+                    {basics.phone && <a href={`tel:${basics.phone}`} className="hover:underline">{basics.phone}</a>}
                     {basics.city && <span>{basics.city}</span>}
-                    {basics.website && <span>{basics.website.replace(/^https?:\/\//, '')}</span>}
-                    {basics.linkedin && <span>{basics.linkedin.replace(/^https?:\/\//, '')}</span>}
+                    {basics.website && <ExternalLink href={basics.website} className="text-blue-600 hover:underline" />}
+                    {basics.linkedin && <ExternalLink href={basics.linkedin} className="text-blue-600 hover:underline" />}
                 </div>
             </div>
         ),
@@ -114,6 +115,34 @@ export const ElegantTemplate: React.FC<TemplateProps> = ({ data }) => {
                     ))}
                 </div>
             </div>
+        ),
+        custom: custom.length > 0 && (
+            <>
+                {custom.map(section => (
+                    <div key={section.id} className="mb-10">
+                        <h2 className="text-2xl font-serif text-center mb-8 pb-2 border-b-2 inline-block mx-auto w-full max-w-xs" style={{ borderColor: themeColor }}>
+                            {section.title}
+                        </h2>
+                        <div className="space-y-6">
+                            {section.items.map(item => (
+                                <div key={item.id} className="text-center">
+                                    <h3 className="text-lg font-bold font-serif text-slate-800">{item.title}</h3>
+                                    {item.link && <ExternalLink href={item.link} className="text-sm text-blue-600 hover:underline" />}
+                                    {item.subtitle && <div className="text-md text-slate-600 italic mb-1">{item.subtitle}</div>}
+                                    {item.date && <div className="text-sm text-slate-400 font-serif">{item.date}</div>}
+                                    {item.items.length > 0 && (
+                                        <ul className="space-y-1 text-slate-600 font-serif leading-relaxed mt-2">
+                                            {item.items.filter(i => i.trim()).map((i, idx) => (
+                                                <li key={idx}>{i}</li>
+                                            ))}
+                                        </ul>
+                                    )}
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                ))}
+            </>
         ),
     };
 

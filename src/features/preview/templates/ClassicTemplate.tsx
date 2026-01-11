@@ -1,13 +1,14 @@
 import React from 'react';
 import type { ResumeData } from '../../resume/types';
 import { useLanguage } from '../../../i18n';
+import { ExternalLink } from '../../../components/ui/linkify';
 
 interface TemplateProps {
     data: ResumeData;
 }
 
 export const ClassicTemplate: React.FC<TemplateProps> = ({ data }) => {
-    const { basics, summary, experience, education, projects, skills, settings } = data;
+    const { basics, summary, experience, education, projects, skills, custom, settings } = data;
     const { themeColor, sectionOrder, sectionVisibility = {} } = settings;
     const { t } = useLanguage();
 
@@ -18,12 +19,12 @@ export const ClassicTemplate: React.FC<TemplateProps> = ({ data }) => {
                     <h1 className="text-3xl font-bold uppercase tracking-wide mb-2" style={{ color: themeColor }}>{basics.name}</h1>
                     <p className="text-xl font-medium mb-2">{basics.title}</p>
                     <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-gray-600">
-                        {basics.email && <span>{basics.email}</span>}
-                        {basics.phone && <span>{basics.phone}</span>}
+                        {basics.email && <a href={`mailto:${basics.email}`} className="hover:underline">{basics.email}</a>}
+                        {basics.phone && <a href={`tel:${basics.phone}`} className="hover:underline">{basics.phone}</a>}
                         {basics.city && <span>{basics.city}</span>}
-                        {basics.website && <span>{basics.website}</span>}
-                        {basics.linkedin && <span>{basics.linkedin}</span>}
-                        {basics.github && <span>{basics.github}</span>}
+                        {basics.website && <ExternalLink href={basics.website} className="text-blue-600 hover:underline" />}
+                        {basics.linkedin && <ExternalLink href={basics.linkedin} className="text-blue-600 hover:underline" />}
+                        {basics.github && <ExternalLink href={basics.github} className="text-blue-600 hover:underline" />}
                     </div>
                 </div>
                 {basics.avatarBase64 && (
@@ -103,7 +104,7 @@ export const ClassicTemplate: React.FC<TemplateProps> = ({ data }) => {
                             <div className="flex justify-between items-baseline mb-1">
                                 <div className="flex items-center gap-2">
                                     <h3 className="font-bold text-gray-800">{proj.name}</h3>
-                                    {proj.link && <a href={proj.link} target="_blank" rel="noreferrer" className="text-xs text-blue-600 underline">{proj.link}</a>}
+                                    {proj.link && <ExternalLink href={proj.link} className="text-xs text-blue-600 underline" />}
                                 </div>
                             </div>
                             {proj.techStack.length > 0 && (
@@ -134,7 +135,36 @@ export const ClassicTemplate: React.FC<TemplateProps> = ({ data }) => {
                 </div>
             </div>
         ),
-        custom: null,
+        custom: custom.length > 0 && (
+            <>
+                {custom.map(section => (
+                    <div key={section.id} className="mb-6">
+                        <h2 className="text-lg font-bold uppercase mb-3 border-b pb-1" style={{ color: themeColor, borderColor: themeColor }}>{section.title}</h2>
+                        <div className="space-y-3">
+                            {section.items.map(item => (
+                                <div key={item.id}>
+                                    <div className="flex justify-between items-baseline mb-1">
+                                        <div className="flex items-center gap-2">
+                                            <h3 className="font-bold text-gray-800">{item.title}</h3>
+                                            {item.link && <ExternalLink href={item.link} className="text-xs text-blue-600 underline" />}
+                                        </div>
+                                        {item.date && <span className="text-sm text-gray-600 font-medium">{item.date}</span>}
+                                    </div>
+                                    {item.subtitle && <p className="text-sm font-semibold italic text-gray-700 mb-1">{item.subtitle}</p>}
+                                    {item.items.length > 0 && (
+                                        <ul className="list-disc list-outside ml-4 text-sm space-y-1 text-gray-700">
+                                            {item.items.filter(i => i.trim()).map((i, idx) => (
+                                                <li key={idx} className="leading-snug">{i}</li>
+                                            ))}
+                                        </ul>
+                                    )}
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                ))}
+            </>
+        ),
     };
 
     // Ensure basics is top if not in order (though editor handles order, logic here should respect it)

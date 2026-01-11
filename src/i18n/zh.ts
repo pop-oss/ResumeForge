@@ -77,4 +77,19 @@ export const zh: Translations = {
   // Common
   onePerLine: '每行一条',
   optional: '可选',
+
+  // Custom sections
+  custom: '自定义',
+  newSection: '新板块',
+  sectionTitle: '板块标题',
+  itemTitle: '标题',
+  itemTitlePlaceholder: '例如：获奖名称',
+  itemSubtitle: '副标题',
+  itemSubtitlePlaceholder: '例如：颁发机构',
+  date: '日期',
+  details: '详情',
+  detailsPlaceholder: '• 详情 1\n• 详情 2',
+  addItem: '添加条目',
+  addCustomSection: '添加自定义板块',
+  previewCustom: '自定义',
 };

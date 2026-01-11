@@ -1,13 +1,14 @@
 import React from 'react';
 import type { ResumeData } from '../../resume/types';
 import { useLanguage } from '../../../i18n';
+import { ExternalLink } from '../../../components/ui/linkify';
 
 interface TemplateProps {
     data: ResumeData;
 }
 
 export const TechTemplate: React.FC<TemplateProps> = ({ data }) => {
-    const { basics, summary, experience, education, projects, skills, settings } = data;
+    const { basics, summary, experience, education, projects, skills, custom, settings } = data;
     const { themeColor, sectionOrder, sectionVisibility = {} } = settings;
     const { t } = useLanguage();
 
@@ -159,7 +160,48 @@ export const TechTemplate: React.FC<TemplateProps> = ({ data }) => {
                 </div>
             </div>
         ),
-        custom: null,
+        custom: custom.length > 0 && (
+            <>
+                {custom.map(section => (
+                    <div key={section.id} className="mb-6">
+                        <h2 className="text-lg font-bold mb-4 font-mono flex items-center gap-2">
+                            <span style={{ color: themeColor }}>{'<'}</span>
+                            {section.title}
+                            <span style={{ color: themeColor }}>{'/>'}</span>
+                        </h2>
+                        <div className="space-y-3">
+                            {section.items.map(item => (
+                                <div key={item.id} className="p-4 bg-white rounded-lg border border-slate-200 hover:border-slate-300 transition-colors">
+                                    <div className="flex justify-between items-start mb-2">
+                                        <div>
+                                            <div className="flex items-center gap-2">
+                                                <h3 className="font-bold text-slate-800">{item.title}</h3>
+                                                {item.link && <ExternalLink href={item.link} className="text-xs text-blue-500 hover:underline" />}
+                                            </div>
+                                            {item.subtitle && <p className="text-sm" style={{ color: themeColor }}>{item.subtitle}</p>}
+                                        </div>
+                                        {item.date && (
+                                            <code className="text-xs bg-slate-100 px-2 py-1 rounded text-slate-600">
+                                                {item.date}
+                                            </code>
+                                        )}
+                                    </div>
+                                    {item.items.length > 0 && (
+                                        <ul className="text-sm text-slate-600 space-y-1 font-mono">
+                                            {item.items.filter(i => i.trim()).map((i, idx) => (
+                                                <li key={idx} className="flex items-start gap-2">
+                                                    <span style={{ color: themeColor }}>→</span> {i}
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    )}
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                ))}
+            </>
+        ),
     };
 
     return (

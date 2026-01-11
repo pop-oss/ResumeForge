@@ -77,4 +77,19 @@ export interface Translations {
   // Common
   onePerLine: string;
   optional: string;
+
+  // Custom sections
+  custom: string;
+  newSection: string;
+  sectionTitle: string;
+  itemTitle: string;
+  itemTitlePlaceholder: string;
+  itemSubtitle: string;
+  itemSubtitlePlaceholder: string;
+  date: string;
+  details: string;
+  detailsPlaceholder: string;
+  addItem: string;
+  addCustomSection: string;
+  previewCustom: string;
 }

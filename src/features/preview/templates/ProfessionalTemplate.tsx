@@ -1,13 +1,14 @@
 import React from 'react';
 import type { ResumeData } from '../../resume/types';
 import { useLanguage } from '../../../i18n';
+import { ExternalLink } from '../../../components/ui/linkify';
 
 interface TemplateProps {
     data: ResumeData;
 }
 
 export const ProfessionalTemplate: React.FC<TemplateProps> = ({ data }) => {
-    const { basics, summary, experience, education, projects, skills, settings } = data;
+    const { basics, summary, experience, education, projects, skills, custom, settings } = data;
     const { themeColor, sectionOrder, sectionVisibility = {} } = settings;
     const { t } = useLanguage();
 
@@ -29,12 +30,12 @@ export const ProfessionalTemplate: React.FC<TemplateProps> = ({ data }) => {
                         </div>
                     </div>
                     <div className="text-right text-sm text-gray-600">
-                        {basics.email && <p>{basics.email}</p>}
-                        {basics.phone && <p>{basics.phone}</p>}
+                        {basics.email && <p><a href={`mailto:${basics.email}`} className="hover:underline">{basics.email}</a></p>}
+                        {basics.phone && <p><a href={`tel:${basics.phone}`} className="hover:underline">{basics.phone}</a></p>}
                         {basics.city && <p>{basics.city}</p>}
                         <div className="flex gap-2 justify-end mt-1 text-xs text-gray-400">
-                            {basics.linkedin && <span>{basics.linkedin}</span>}
-                            {basics.github && <span>{basics.github}</span>}
+                            {basics.linkedin && <ExternalLink href={basics.linkedin} className="text-blue-600 hover:underline" />}
+                            {basics.github && <ExternalLink href={basics.github} className="text-blue-600 hover:underline" />}
                         </div>
                     </div>
                 </div>
@@ -94,7 +95,7 @@ export const ProfessionalTemplate: React.FC<TemplateProps> = ({ data }) => {
                         <div key={proj.id}>
                             <div className="flex items-baseline gap-2">
                                 <h3 className="font-bold text-gray-900">{proj.name}</h3>
-                                {proj.link && <a href={proj.link} className="text-xs" style={{ color: themeColor }}>{proj.link}</a>}
+                                {proj.link && <ExternalLink href={proj.link} className="text-xs" />}
                             </div>
                             <p className="text-xs text-gray-500 mb-1">{proj.techStack.join(' | ')}</p>
                             <ul className="text-sm text-gray-600 space-y-1">
@@ -123,7 +124,39 @@ export const ProfessionalTemplate: React.FC<TemplateProps> = ({ data }) => {
                 </div>
             </div>
         ),
-        custom: null,
+        custom: custom.length > 0 && (
+            <>
+                {custom.map(section => (
+                    <div key={section.id} className="mb-6">
+                        <h2 className="text-sm font-bold uppercase tracking-wider mb-4" style={{ color: themeColor }}>{section.title}</h2>
+                        <div className="space-y-4">
+                            {section.items.map(item => (
+                                <div key={item.id}>
+                                    <div className="flex justify-between items-baseline">
+                                        <div className="flex items-center gap-2">
+                                            <h3 className="font-bold text-gray-900">{item.title}</h3>
+                                            {item.link && <ExternalLink href={item.link} className="text-xs text-blue-600 hover:underline" />}
+                                        </div>
+                                        {item.date && <span className="text-sm text-gray-500">{item.date}</span>}
+                                    </div>
+                                    {item.subtitle && <p className="text-sm font-medium mb-2" style={{ color: themeColor }}>{item.subtitle}</p>}
+                                    {item.items.length > 0 && (
+                                        <ul className="text-sm text-gray-600 space-y-1">
+                                            {item.items.filter(i => i.trim()).map((i, idx) => (
+                                                <li key={idx} className="flex items-start gap-2">
+                                                    <span className="mt-1.5 w-1.5 h-1.5 rounded-full shrink-0" style={{ backgroundColor: themeColor }}></span>
+                                                    {i}
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    )}
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                ))}
+            </>
+        ),
     };
 
     return (

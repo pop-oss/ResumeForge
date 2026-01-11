@@ -1,13 +1,14 @@
 import React from 'react';
 import type { ResumeData } from '../../resume/types';
 import { useLanguage } from '../../../i18n';
+import { ExternalLink } from '../../../components/ui/linkify';
 
 interface TemplateProps {
     data: ResumeData;
 }
 
 export const ModernTemplate: React.FC<TemplateProps> = ({ data }) => {
-    const { basics, summary, experience, education, projects, skills, settings } = data;
+    const { basics, summary, experience, education, projects, skills, custom, settings } = data;
     const { themeColor, sectionOrder, sectionVisibility = {} } = settings;
     const { t } = useLanguage();
 
@@ -18,10 +19,10 @@ export const ModernTemplate: React.FC<TemplateProps> = ({ data }) => {
                     <h1 className="text-4xl font-bold tracking-tight mb-2">{basics.name}</h1>
                     <p className="text-lg text-slate-300 mb-4 font-medium">{basics.title}</p>
                     <div className="flex flex-wrap gap-4 text-sm text-slate-400">
-                        {basics.email && <span>{basics.email}</span>}
-                        {basics.phone && <span>{basics.phone}</span>}
+                        {basics.email && <a href={`mailto:${basics.email}`} className="hover:text-white">{basics.email}</a>}
+                        {basics.phone && <a href={`tel:${basics.phone}`} className="hover:text-white">{basics.phone}</a>}
                         {basics.city && <span>{basics.city}</span>}
-                        {basics.linkedin && <span>{basics.linkedin.replace(/^https?:\/\//, '')}</span>}
+                        {basics.linkedin && <ExternalLink href={basics.linkedin} className="hover:text-white" />}
                     </div>
                 </div>
                 {basics.avatarBase64 && (
@@ -98,7 +99,7 @@ export const ModernTemplate: React.FC<TemplateProps> = ({ data }) => {
                         <div key={proj.id}>
                             <div className="flex justify-between items-baseline mb-1">
                                 <h3 className="font-bold text-slate-800">{proj.name}</h3>
-                                {proj.link && <a href={proj.link} className="text-xs text-blue-500 hover:underline">{proj.link}</a>}
+                                {proj.link && <ExternalLink href={proj.link} className="text-xs text-blue-500 hover:underline" />}
                             </div>
                             <p className="text-sm text-slate-600">{proj.highlights[0]}</p>
                         </div>
@@ -106,7 +107,40 @@ export const ModernTemplate: React.FC<TemplateProps> = ({ data }) => {
                 </div>
             </div>
         ),
-        custom: null,
+        custom: custom.length > 0 && (
+            <>
+                {custom.map(section => (
+                    <div key={section.id} className="mb-8">
+                        <h2 className="text-md font-bold uppercase tracking-wider mb-4 text-slate-400">{section.title}</h2>
+                        <div className="space-y-4">
+                            {section.items.map(item => (
+                                <div key={item.id} className="relative pl-4 border-l-2" style={{ borderColor: themeColor }}>
+                                    <div className="flex justify-between items-baseline mb-1">
+                                        <div className="flex items-center gap-2">
+                                            <h3 className="font-bold text-slate-800">{item.title}</h3>
+                                            {item.link && <ExternalLink href={item.link} className="text-xs text-blue-500 hover:underline" />}
+                                        </div>
+                                        {item.date && (
+                                            <span className="text-xs font-semibold text-slate-500 bg-slate-100 px-2 py-1 rounded">
+                                                {item.date}
+                                            </span>
+                                        )}
+                                    </div>
+                                    {item.subtitle && <div className="text-sm font-medium text-slate-600 mb-2">{item.subtitle}</div>}
+                                    {item.items.length > 0 && (
+                                        <ul className="text-sm space-y-1.5 text-slate-600">
+                                            {item.items.filter(i => i.trim()).map((i, idx) => (
+                                                <li key={idx}>{i}</li>
+                                            ))}
+                                        </ul>
+                                    )}
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                ))}
+            </>
+        ),
     };
 
     return (

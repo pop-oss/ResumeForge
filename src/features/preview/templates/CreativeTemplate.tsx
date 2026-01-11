@@ -1,13 +1,14 @@
 import React from 'react';
 import type { ResumeData } from '../../resume/types';
 import { useLanguage } from '../../../i18n';
+import { ExternalLink } from '../../../components/ui/linkify';
 
 interface TemplateProps {
     data: ResumeData;
 }
 
 export const CreativeTemplate: React.FC<TemplateProps> = ({ data }) => {
-    const { basics, summary, experience, education, projects, skills, settings } = data;
+    const { basics, summary, experience, education, projects, skills, custom, settings } = data;
     const { themeColor } = settings;
     const { t } = useLanguage();
 
@@ -31,10 +32,10 @@ export const CreativeTemplate: React.FC<TemplateProps> = ({ data }) => {
                     </div>
 
                     <div className="text-right space-y-1 text-sm font-bold text-slate-500">
-                        {basics.email && <div>{basics.email}</div>}
-                        {basics.phone && <div>{basics.phone}</div>}
-                        {basics.website && <div>{basics.website.replace(/^https?:\/\//, '')}</div>}
-                        {basics.linkedin && <div>{basics.linkedin.replace(/^https?:\/\//, '')}</div>}
+                        {basics.email && <div><a href={`mailto:${basics.email}`} className="hover:underline">{basics.email}</a></div>}
+                        {basics.phone && <div><a href={`tel:${basics.phone}`} className="hover:underline">{basics.phone}</a></div>}
+                        {basics.website && <div><ExternalLink href={basics.website} className="text-blue-600 hover:underline" /></div>}
+                        {basics.linkedin && <div><ExternalLink href={basics.linkedin} className="text-blue-600 hover:underline" /></div>}
                     </div>
 
                     {basics.avatarBase64 && (
@@ -142,6 +143,46 @@ export const CreativeTemplate: React.FC<TemplateProps> = ({ data }) => {
                                 </div>
                             </div>
                         )}
+
+                        {custom.length > 0 && custom.map(section => (
+                            <div key={section.id}>
+                                <h3 className="text-2xl font-black uppercase tracking-tight mb-6 flex items-center gap-3">
+                                    <span className="w-8 h-1 rounded-full" style={{ backgroundColor: themeColor }}></span>
+                                    {section.title}
+                                </h3>
+                                <div className="space-y-6">
+                                    {section.items.map(item => (
+                                        <div key={item.id} className="relative">
+                                            <div className="flex justify-between items-baseline mb-2">
+                                                <div className="flex items-center gap-2">
+                                                    <h4 className="text-xl font-bold text-slate-800">{item.title}</h4>
+                                                    {item.link && <ExternalLink href={item.link} className="text-sm text-blue-600 hover:underline" />}
+                                                </div>
+                                                {item.date && (
+                                                    <span className="text-sm font-bold bg-slate-100 px-2 py-1 rounded text-slate-500">
+                                                        {item.date}
+                                                    </span>
+                                                )}
+                                            </div>
+                                            {item.subtitle && (
+                                                <div className="text-lg font-medium text-slate-500 mb-3" style={{ color: themeColor }}>
+                                                    {item.subtitle}
+                                                </div>
+                                            )}
+                                            {item.items.length > 0 && (
+                                                <ul className="space-y-2">
+                                                    {item.items.filter(i => i.trim()).map((i, idx) => (
+                                                        <li key={idx} className="text-slate-600 font-medium leading-relaxed pl-5 relative before:content-['→'] before:absolute before:left-0 before:font-bold">
+                                                            {i}
+                                                        </li>
+                                                    ))}
+                                                </ul>
+                                            )}
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        ))}
                     </div>
                 </div>
             </div>

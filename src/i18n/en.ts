@@ -77,4 +77,19 @@ export const en: Translations = {
   // Common
   onePerLine: 'One per line',
   optional: 'Optional',
+
+  // Custom sections
+  custom: 'Custom',
+  newSection: 'New Section',
+  sectionTitle: 'Section Title',
+  itemTitle: 'Title',
+  itemTitlePlaceholder: 'e.g. Award Name',
+  itemSubtitle: 'Subtitle',
+  itemSubtitlePlaceholder: 'e.g. Organization',
+  date: 'Date',
+  details: 'Details',
+  detailsPlaceholder: '• Detail 1\n• Detail 2',
+  addItem: 'Add Item',
+  addCustomSection: 'Add Custom Section',
+  previewCustom: 'Custom',
 };

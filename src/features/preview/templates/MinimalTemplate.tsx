@@ -1,13 +1,14 @@
 import React from 'react';
 import type { ResumeData } from '../../resume/types';
 import { useLanguage } from '../../../i18n';
+import { ExternalLink } from '../../../components/ui/linkify';
 
 interface TemplateProps {
     data: ResumeData;
 }
 
 export const MinimalTemplate: React.FC<TemplateProps> = ({ data }) => {
-    const { basics, summary, experience, education, projects, skills, settings } = data;
+    const { basics, summary, experience, education, projects, skills, custom, settings } = data;
     const { sectionOrder, sectionVisibility = {} } = settings;
     const { t } = useLanguage();
 
@@ -24,15 +25,15 @@ export const MinimalTemplate: React.FC<TemplateProps> = ({ data }) => {
                 <h1 className="text-4xl font-light tracking-widest uppercase mb-2 text-gray-800">{basics.name}</h1>
                 <p className="text-lg text-gray-500 font-light tracking-wide mb-4">{basics.title}</p>
                 <div className="flex justify-center flex-wrap gap-4 text-sm text-gray-500">
-                    {basics.email && <span>{basics.email}</span>}
+                    {basics.email && <a href={`mailto:${basics.email}`} className="hover:underline">{basics.email}</a>}
                     {basics.phone && <span>•</span>}
-                    {basics.phone && <span>{basics.phone}</span>}
+                    {basics.phone && <a href={`tel:${basics.phone}`} className="hover:underline">{basics.phone}</a>}
                     {basics.city && <span>•</span>}
                     {basics.city && <span>{basics.city}</span>}
                 </div>
                 <div className="flex justify-center gap-4 mt-2 text-sm text-gray-400">
-                    {basics.linkedin && <span>{basics.linkedin}</span>}
-                    {basics.github && <span>{basics.github}</span>}
+                    {basics.linkedin && <ExternalLink href={basics.linkedin} className="hover:text-gray-600" />}
+                    {basics.github && <ExternalLink href={basics.github} className="hover:text-gray-600" />}
                 </div>
             </div>
         ),
@@ -96,7 +97,32 @@ export const MinimalTemplate: React.FC<TemplateProps> = ({ data }) => {
                 </div>
             </div>
         ),
-        custom: null,
+        custom: custom.length > 0 && (
+            <>
+                {custom.map(section => (
+                    <div key={section.id} className="mb-8">
+                        <h2 className="text-xs font-semibold uppercase tracking-[0.3em] text-gray-400 mb-6 text-center">{section.title}</h2>
+                        <div className="space-y-4 text-center">
+                            {section.items.map(item => (
+                                <div key={item.id}>
+                                    <h3 className="font-medium text-gray-800">{item.title}</h3>
+                                    {item.link && <ExternalLink href={item.link} className="text-xs text-blue-500 hover:underline" />}
+                                    {item.subtitle && <p className="text-sm text-gray-500">{item.subtitle}</p>}
+                                    {item.date && <p className="text-xs text-gray-400">{item.date}</p>}
+                                    {item.items.length > 0 && (
+                                        <ul className="text-sm text-gray-600 space-y-1 max-w-xl mx-auto mt-1">
+                                            {item.items.filter(i => i.trim()).map((i, idx) => (
+                                                <li key={idx}>{i}</li>
+                                            ))}
+                                        </ul>
+                                    )}
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                ))}
+            </>
+        ),
     };
 
     return (
