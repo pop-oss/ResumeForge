@@ -27,7 +27,103 @@ export const Header: React.FC<HeaderProps> = ({ zoom, setZoom }) => {
     };
 
     const handlePrint = () => {
-        window.print();
+        const element = document.getElementById('resume-preview');
+        if (!element) {
+            window.print();
+            return;
+        }
+
+        // 获取所有样式
+        const styles = Array.from(document.styleSheets)
+            .map(styleSheet => {
+                try {
+                    return Array.from(styleSheet.cssRules)
+                        .map(rule => rule.cssText)
+                        .join('\n');
+                } catch (e) {
+                    return '';
+                }
+            })
+            .join('\n');
+
+        // 创建隐藏的 iframe
+        const iframe = document.createElement('iframe');
+        iframe.style.position = 'absolute';
+        iframe.style.width = '0';
+        iframe.style.height = '0';
+        iframe.style.border = 'none';
+        iframe.style.left = '-9999px';
+        document.body.appendChild(iframe);
+
+        const iframeDoc = iframe.contentDocument || iframe.contentWindow?.document;
+        if (!iframeDoc) {
+            window.print();
+            return;
+        }
+
+        // 写入打印内容
+        iframeDoc.open();
+        iframeDoc.write(`
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <title>简历</title>
+                <style>
+                    ${styles}
+                    @page {
+                        size: A4;
+                        margin: 0;
+                    }
+                    html, body {
+                        margin: 0;
+                        padding: 0;
+                        background: white;
+                        -webkit-print-color-adjust: exact;
+                        print-color-adjust: exact;
+                    }
+                    #print-content {
+                        width: 210mm;
+                        min-height: 297mm;
+                        margin: 0;
+                        padding: 0;
+                        background: white;
+                    }
+                    .print\\:hidden, [class*="ring-2"], button, .cursor-move {
+                        display: none !important;
+                    }
+                </style>
+            </head>
+            <body>
+                <div id="print-content">
+                    ${element.innerHTML}
+                </div>
+            </body>
+            </html>
+        `);
+        iframeDoc.close();
+
+        // 等待 iframe 加载完成后打印
+        iframe.onload = () => {
+            setTimeout(() => {
+                iframe.contentWindow?.print();
+                // 打印完成后移除 iframe
+                setTimeout(() => {
+                    document.body.removeChild(iframe);
+                }, 100);
+            }, 100);
+        };
+
+        // 备用触发
+        setTimeout(() => {
+            if (document.body.contains(iframe)) {
+                iframe.contentWindow?.print();
+                setTimeout(() => {
+                    if (document.body.contains(iframe)) {
+                        document.body.removeChild(iframe);
+                    }
+                }, 100);
+            }
+        }, 500);
     };
 
     const handleExportJSON = () => {

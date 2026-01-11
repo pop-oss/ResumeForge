@@ -93,7 +93,7 @@ export const Preview: React.FC = () => {
             <div
                 id="resume-preview"
                 ref={containerRef}
-                className={`bg-white shadow-2xl print:shadow-none print:fixed print:inset-0 print:z-[99999] origin-top text-left ${editMode ? 'ring-2 ring-blue-200' : ''}`}
+                className={`bg-white shadow-2xl print:shadow-none origin-top text-left ${editMode ? 'ring-2 ring-blue-200' : ''}`}
                 style={{
                     width: '210mm',
                     minHeight: '297mm',

@@ -57,13 +57,13 @@ export const Layout: React.FC = () => {
                     ref={containerRef}
                     className={cn(
                         "w-full h-full flex-1 bg-slate-100/50 relative overflow-hidden flex flex-col items-center p-4 sm:p-8 absolute md:relative inset-0 z-0 transition-opacity duration-300 md:opacity-100",
-                        "print:absolute print:inset-0 print:p-0 print:m-0 print:bg-white print:overflow-visible print:block print:w-auto print:h-auto",
+                        "print:static print:p-0 print:m-0 print:bg-white print:overflow-visible print:block print:w-auto print:h-auto print:flex-none",
                         mobileTab === 'preview' ? "opacity-100 z-20 bg-slate-100/50" : "opacity-0 md:opacity-100 pointer-events-none md:pointer-events-auto"
                     )}>
-                    <div className="w-full h-full overflow-auto flex justify-center items-start pt-8 pb-20 custom-scrollbar print:overflow-visible print:p-0 print:block">
+                    <div className="w-full h-full overflow-auto flex justify-center items-start pt-8 pb-20 custom-scrollbar print:overflow-visible print:p-0 print:block print:w-auto print:h-auto">
                         <div 
                             style={{ transform: `scale(${zoom})`, transformOrigin: 'top center', transition: 'transform 0.2s ease-out' }}
-                            className="print:!transform-none"
+                            className="print:!transform-none print:!scale-100"
                         >
                             <Preview />
                         </div>
