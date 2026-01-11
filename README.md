@@ -1,60 +1,118 @@
-# ResumeForge
+# ResumeForge 简历生成器
 
-A pure frontend resume builder built with React, TypeScript, Vite, and TailwindCSS.
-Features drag-and-drop section reordering, real-time A4 preview, PDF export, and local storage persistence.
+一款纯前端的在线简历制作工具，基于 React + TypeScript + Vite + TailwindCSS 构建。支持实时预览、多模板切换、拖拽排序、PDF 导出等功能，所有数据本地存储，保护隐私。
 
-## Features
+## ✨ 功能特性
 
-- **Real-time Preview**: See your resume update instantly as you type.
-- **Drag & Drop**: Reorder sections (Experience, Education, Skills, etc.) using drag and drop.
-- **Two Templates**: Choose between "Classic" and "Modern" designs.
-- **Customizable**: Change theme colors, fonts, and visibility of sections.
-- **Privacy First**: All data is stored locally in your browser (`localStorage`). No backend interaction.
-- **Import/Export**: detailed JSON export and import to save/load your resume data.
-- **PDF Export**: Uses native browser print functionality for high-quality PDF generation.
-- **Mobile Friendly**: Responsive layout with tab switching on mobile devices.
+### 📝 简历编辑
+- **实时预览** - 编辑内容即时同步到预览区域
+- **多模块支持** - 基本信息、个人简介、工作经历、教育背景、项目经历、专业技能、自定义模块
+- **拖拽排序** - 支持模块间拖拽调整顺序
+- **模块显隐** - 一键控制各模块的显示/隐藏
+- **自定义标签** - 可修改字段标签名称
+- **编辑模式** - 直接在预览区点击编辑内容
 
-## Tech Stack
+### 🎨 模板与样式
+- **8 套精美模板**
+  - Classic（经典）- 传统简洁风格
+  - Modern（现代）- 现代简约设计
+  - Minimal（极简）- 极简主义风格
+  - Professional（专业）- 商务专业风格
+  - Elegant（优雅）- 优雅精致设计
+  - Creative（创意）- 创意个性风格
+  - Executive（高管）- 高端大气风格
+  - Tech（技术）- 技术人员专属
+- **主题色自定义** - 自由选择主题颜色
+- **缩放控制** - 预览区域支持缩放调整
 
-- **Framework**: React 18 + Vite
-- **Language**: TypeScript
-- **Styling**: TailwindCSS
-- **UI Components**: Radix UI / Shadcn Concepts
-- **Form Handling**: React Hook Form (concepts used)
-- **Drag & Drop**: @dnd-kit
-- **Icons**: Lucide React
+### 💾 数据管理
+- **本地存储** - 数据自动保存到浏览器 localStorage
+- **JSON 导入/导出** - 支持数据备份和恢复
+- **PDF 导出** - 高质量 PDF 文件生成
+- **打印支持** - 优化的打印样式，支持 A4 纸张
 
-## Getting Started
+### 🌐 其他特性
+- **中英双语** - 支持中文/英文界面切换
+- **响应式布局** - 适配桌面端和移动端
+- **隐私保护** - 纯前端应用，无后端交互
 
-1.  **Install Dependencies**
-    ```bash
-    npm install
-    ```
+## 🛠️ 技术栈
 
-2.  **Start Development Server**
-    ```bash
-    npm run dev
-    ```
+| 类别 | 技术 |
+|------|------|
+| 框架 | React 18 + Vite |
+| 语言 | TypeScript |
+| 样式 | TailwindCSS |
+| UI 组件 | Radix UI / Shadcn |
+| 拖拽 | @dnd-kit |
+| 图标 | Lucide React |
+| PDF | html2canvas + jsPDF |
+| 测试 | Vitest |
 
-3.  **Build for Production**
-    ```bash
-    npm run build
-    ```
+## 🚀 快速开始
 
-## Usage
+### 安装依赖
+```bash
+npm install
+```
 
-1.  **Edit**: Use the left panel to fill in your details.
-2.  **Reorder**: Drag the handle (grid icon) next to section titles to reorder them on the resume.
-3.  **Hide/Show**: Click the eye icon to toggle visibility of sections.
-4.  **Theme**: Use the color picker in the header to change the accent color.
-5.  **Export**:
-    -   Click "Export JSON" to save your data backup.
-    -   Click "Export PDF" (or Print) to save as PDF. **Ensure "Background graphics" is enabled in print settings.**
+### 启动开发服务器
+```bash
+npm run dev
+```
 
-## Project Structure
+### 构建生产版本
+```bash
+npm run build
+```
 
--   `src/components/ui`: Reusable UI components.
--   `src/features/editor`: Form components and logic.
--   `src/features/preview`: Resume renderers and templates.
--   `src/features/resume`: Core data types and context/state.
--   `src/features/layout`: Main app layout.
+### 运行测试
+```bash
+npm run test
+```
+
+## 📖 使用指南
+
+### 基本操作
+1. **编辑内容** - 在左侧面板填写个人信息
+2. **调整顺序** - 拖拽模块标题旁的图标调整顺序
+3. **显隐控制** - 点击眼睛图标切换模块显示状态
+4. **切换模板** - 在顶部下拉框选择不同模板
+5. **更换主题色** - 点击颜色选择器自定义主题色
+
+### 导出简历
+- **导出 JSON** - 保存数据备份，方便后续导入
+- **导出 PDF** - 生成高质量 PDF 文件
+- **打印** - 使用浏览器打印功能（建议开启"背景图形"选项）
+
+### 编辑模式
+点击"编辑排版"按钮进入编辑模式，可以：
+- 直接点击预览区内容进行编辑
+- 拖拽元素调整位置
+- 点击"完成编辑"退出编辑模式
+
+## 📁 项目结构
+
+```
+src/
+├── components/ui/       # 通用 UI 组件
+├── features/
+│   ├── editor/         # 编辑器模块
+│   │   └── sections/   # 各模块表单组件
+│   ├── header/         # 顶部导航栏
+│   ├── layout/         # 页面布局
+│   ├── preview/        # 预览模块
+│   │   ├── components/ # 预览相关组件
+│   │   └── templates/  # 简历模板
+│   └── resume/         # 简历数据管理
+│       ├── types.ts    # 类型定义
+│       ├── data.ts     # 默认数据
+│       └── ResumeContext.tsx # 状态管理
+├── hooks/              # 自定义 Hooks
+├── i18n/               # 国际化
+└── lib/                # 工具函数
+```
+
+## 📄 License
+
+MIT License
