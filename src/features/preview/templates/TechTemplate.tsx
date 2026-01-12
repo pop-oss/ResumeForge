@@ -9,8 +9,14 @@ interface TemplateProps {
 
 export const TechTemplate: React.FC<TemplateProps> = ({ data }) => {
     const { basics, summary, experience, education, projects, skills, custom, settings } = data;
-    const { themeColor, sectionOrder, sectionVisibility = {} } = settings;
+    const { themeColor, sectionOrder, sectionVisibility = {}, fieldLabels = {} } = settings;
     const { t } = useLanguage();
+
+    // 获取 section 标题，优先使用自定义标题
+    const getSectionTitle = (sectionKey: string, defaultTitle: string) => {
+        const labelKey = `section${sectionKey.charAt(0).toUpperCase() + sectionKey.slice(1)}`;
+        return (fieldLabels as Record<string, string>)[labelKey] || defaultTitle;
+    };
 
     const sectionRenderers: Record<string, React.ReactNode> = {
         basics: (
@@ -61,7 +67,7 @@ export const TechTemplate: React.FC<TemplateProps> = ({ data }) => {
             <div className="mb-6">
                 <h2 className="text-lg font-bold mb-4 font-mono flex items-center gap-2">
                     <span style={{ color: themeColor }}>{'<'}</span>
-                    {t.previewExperience}
+                    {getSectionTitle('experience', t.previewExperience)}
                     <span style={{ color: themeColor }}>{'/>'}</span>
                 </h2>
                 <div className="space-y-4">
@@ -92,7 +98,7 @@ export const TechTemplate: React.FC<TemplateProps> = ({ data }) => {
             <div className="mb-6">
                 <h2 className="text-lg font-bold mb-4 font-mono flex items-center gap-2">
                     <span style={{ color: themeColor }}>{'<'}</span>
-                    {t.previewEducation}
+                    {getSectionTitle('education', t.previewEducation)}
                     <span style={{ color: themeColor }}>{'/>'}</span>
                 </h2>
                 <div className="space-y-3">
@@ -112,7 +118,7 @@ export const TechTemplate: React.FC<TemplateProps> = ({ data }) => {
             <div className="mb-6">
                 <h2 className="text-lg font-bold mb-4 font-mono flex items-center gap-2">
                     <span style={{ color: themeColor }}>{'<'}</span>
-                    {t.previewProjects}
+                    {getSectionTitle('projects', t.previewProjects)}
                     <span style={{ color: themeColor }}>{'/>'}</span>
                 </h2>
                 <div className="grid grid-cols-2 gap-3">
@@ -137,7 +143,7 @@ export const TechTemplate: React.FC<TemplateProps> = ({ data }) => {
             <div className="mb-6">
                 <h2 className="text-lg font-bold mb-4 font-mono flex items-center gap-2">
                     <span style={{ color: themeColor }}>{'<'}</span>
-                    {t.previewSkills}
+                    {getSectionTitle('skills', t.previewSkills)}
                     <span style={{ color: themeColor }}>{'/>'}</span>
                 </h2>
                 <div className="p-4 bg-slate-900 rounded-lg font-mono text-sm">

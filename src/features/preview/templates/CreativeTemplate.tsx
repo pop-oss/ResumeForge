@@ -9,8 +9,14 @@ interface TemplateProps {
 
 export const CreativeTemplate: React.FC<TemplateProps> = ({ data }) => {
     const { basics, summary, experience, education, projects, skills, custom, settings } = data;
-    const { themeColor } = settings;
+    const { themeColor, fieldLabels = {} } = settings;
     const { t } = useLanguage();
+
+    // 获取 section 标题，优先使用自定义标题
+    const getSectionTitle = (sectionKey: string, defaultTitle: string) => {
+        const labelKey = `section${sectionKey.charAt(0).toUpperCase() + sectionKey.slice(1)}`;
+        return (fieldLabels as Record<string, string>)[labelKey] || defaultTitle;
+    };
 
     // Creative: Split header with huge name, colorful splotches or shapes.
     // Let's do a left-heavy header with a big colored block.
@@ -50,7 +56,7 @@ export const CreativeTemplate: React.FC<TemplateProps> = ({ data }) => {
                     <div className="col-span-4 space-y-10">
                         {skills.length > 0 && (
                             <div>
-                                <h3 className="text-sm font-black uppercase tracking-widest mb-4 border-l-4 pl-2" style={{ borderColor: themeColor }}>{t.previewSkills}</h3>
+                                <h3 className="text-sm font-black uppercase tracking-widest mb-4 border-l-4 pl-2" style={{ borderColor: themeColor }}>{getSectionTitle('skills', t.previewSkills)}</h3>
                                 <div className="space-y-4">
                                     {skills.map(group => (
                                         <div key={group.id}>
@@ -70,7 +76,7 @@ export const CreativeTemplate: React.FC<TemplateProps> = ({ data }) => {
 
                         {education.length > 0 && (
                             <div>
-                                <h3 className="text-sm font-black uppercase tracking-widest mb-4 border-l-4 pl-2" style={{ borderColor: themeColor }}>{t.previewEducation}</h3>
+                                <h3 className="text-sm font-black uppercase tracking-widest mb-4 border-l-4 pl-2" style={{ borderColor: themeColor }}>{getSectionTitle('education', t.previewEducation)}</h3>
                                 <div className="space-y-4">
                                     {education.map(edu => (
                                         <div key={edu.id}>
@@ -85,7 +91,7 @@ export const CreativeTemplate: React.FC<TemplateProps> = ({ data }) => {
 
                         {summary && (
                             <div className="bg-slate-50 p-4 rounded-lg">
-                                <h3 className="text-sm font-black uppercase tracking-widest mb-2 text-slate-400">{t.previewSummary}</h3>
+                                <h3 className="text-sm font-black uppercase tracking-widest mb-2 text-slate-400">{getSectionTitle('summary', t.previewSummary)}</h3>
                                 <p className="text-sm leading-relaxed text-slate-700 font-medium">
                                     {summary}
                                 </p>
@@ -99,7 +105,7 @@ export const CreativeTemplate: React.FC<TemplateProps> = ({ data }) => {
                             <div>
                                 <h3 className="text-2xl font-black uppercase tracking-tight mb-6 flex items-center gap-3">
                                     <span className="w-8 h-1 rounded-full" style={{ backgroundColor: themeColor }}></span>
-                                    {t.previewExperience}
+                                    {getSectionTitle('experience', t.previewExperience)}
                                 </h3>
                                 <div className="space-y-8">
                                     {experience.map(exp => (
@@ -128,7 +134,7 @@ export const CreativeTemplate: React.FC<TemplateProps> = ({ data }) => {
                             <div>
                                 <h3 className="text-2xl font-black uppercase tracking-tight mb-6 flex items-center gap-3">
                                     <span className="w-8 h-1 rounded-full" style={{ backgroundColor: themeColor }}></span>
-                                    {t.previewProjects}
+                                    {getSectionTitle('projects', t.previewProjects)}
                                 </h3>
                                 <div className="grid grid-cols-2 gap-6">
                                     {projects.map(proj => (

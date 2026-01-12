@@ -12,9 +12,15 @@ interface TemplateProps {
 
 export const ModernTemplate: React.FC<TemplateProps> = ({ data }) => {
     const { basics, summary, experience, education, projects, skills, custom, settings } = data;
-    const { themeColor, sectionOrder, sectionVisibility = {}, editMode } = settings;
+    const { themeColor, sectionOrder, sectionVisibility = {}, editMode, fieldLabels = {} } = settings;
     const { t } = useLanguage();
     const { updateBasics, setResumeData } = useResume();
+
+    // 获取 section 标题，优先使用自定义标题
+    const getSectionTitle = (sectionKey: string, defaultTitle: string) => {
+        const labelKey = `section${sectionKey.charAt(0).toUpperCase() + sectionKey.slice(1)}`;
+        return (fieldLabels as Record<string, string>)[labelKey] || defaultTitle;
+    };
 
     const updateExperience = (expId: string, field: string, value: string) => {
         const newExperience = experience.map(exp => 
@@ -144,7 +150,7 @@ export const ModernTemplate: React.FC<TemplateProps> = ({ data }) => {
         basics: renderBasics(),
         summary: summary && (
             <div className="mb-8">
-                <h2 className="text-md font-bold uppercase tracking-wider mb-3 text-slate-400">{t.previewSummary}</h2>
+                <h2 className="text-md font-bold uppercase tracking-wider mb-3 text-slate-400">{getSectionTitle('summary', t.previewSummary)}</h2>
                 {editMode ? (
                     <EditableField
                         fieldId="summary"
@@ -163,7 +169,7 @@ export const ModernTemplate: React.FC<TemplateProps> = ({ data }) => {
         ),
         experience: experience.length > 0 && (
             <div className="mb-8">
-                <h2 className="text-md font-bold uppercase tracking-wider mb-4 text-slate-400">{t.previewExperience}</h2>
+                <h2 className="text-md font-bold uppercase tracking-wider mb-4 text-slate-400">{getSectionTitle('experience', t.previewExperience)}</h2>
                 <EditableSection sectionId="experience">
                     {({ fieldOrder, fieldVisibility }) => (
                         <div className="space-y-6">
@@ -228,7 +234,7 @@ export const ModernTemplate: React.FC<TemplateProps> = ({ data }) => {
         ),
         education: education.length > 0 && (
             <div className="mb-8">
-                <h2 className="text-md font-bold uppercase tracking-wider mb-4 text-slate-400">{t.previewEducation}</h2>
+                <h2 className="text-md font-bold uppercase tracking-wider mb-4 text-slate-400">{getSectionTitle('education', t.previewEducation)}</h2>
                 <EditableSection sectionId="education">
                     {({ fieldOrder, fieldVisibility }) => (
                         <div className="grid grid-cols-1 gap-4">
@@ -296,7 +302,7 @@ export const ModernTemplate: React.FC<TemplateProps> = ({ data }) => {
         ),
         skills: skills.length > 0 && (
             <div className="mb-8">
-                <h2 className="text-md font-bold uppercase tracking-wider mb-4 text-slate-400">{t.previewSkills}</h2>
+                <h2 className="text-md font-bold uppercase tracking-wider mb-4 text-slate-400">{getSectionTitle('skills', t.previewSkills)}</h2>
                 <div className="flex flex-wrap gap-2">
                     {skills.flatMap(group => group.items).map((skill, i) => (
                         <span key={i} className="px-3 py-1 bg-slate-100 text-slate-700 rounded-full text-sm font-medium">
@@ -308,7 +314,7 @@ export const ModernTemplate: React.FC<TemplateProps> = ({ data }) => {
         ),
         projects: projects.length > 0 && (
             <div className="mb-8">
-                <h2 className="text-md font-bold uppercase tracking-wider mb-4 text-slate-400">{t.previewProjects}</h2>
+                <h2 className="text-md font-bold uppercase tracking-wider mb-4 text-slate-400">{getSectionTitle('projects', t.previewProjects)}</h2>
                 <div className="space-y-4">
                     {projects.map(proj => (
                         <div key={proj.id}>

@@ -9,8 +9,14 @@ interface TemplateProps {
 
 export const ElegantTemplate: React.FC<TemplateProps> = ({ data }) => {
     const { basics, summary, experience, education, projects, skills, custom, settings } = data;
-    const { themeColor, sectionOrder, sectionVisibility = {} } = settings;
+    const { themeColor, sectionOrder, sectionVisibility = {}, fieldLabels = {} } = settings;
     const { t } = useLanguage();
+
+    // 获取 section 标题，优先使用自定义标题
+    const getSectionTitle = (sectionKey: string, defaultTitle: string) => {
+        const labelKey = `section${sectionKey.charAt(0).toUpperCase() + sectionKey.slice(1)}`;
+        return (fieldLabels as Record<string, string>)[labelKey] || defaultTitle;
+    };
 
     const sectionRenderers: Record<string, React.ReactNode> = {
         basics: (
@@ -42,7 +48,7 @@ export const ElegantTemplate: React.FC<TemplateProps> = ({ data }) => {
         experience: experience.length > 0 && (
             <div className="mb-10">
                 <h2 className="text-2xl font-serif text-center mb-8 pb-2 border-b-2 inline-block mx-auto w-full max-w-xs" style={{ borderColor: themeColor }}>
-                    {t.previewExperience}
+                    {getSectionTitle('experience', t.previewExperience)}
                 </h2>
                 <div className="space-y-10">
                     {experience.map(exp => (
@@ -68,7 +74,7 @@ export const ElegantTemplate: React.FC<TemplateProps> = ({ data }) => {
         education: education.length > 0 && (
             <div className="mb-10 text-center">
                 <h2 className="text-2xl font-serif text-center mb-8 pb-2 border-b-2 inline-block mx-auto w-full max-w-xs" style={{ borderColor: themeColor }}>
-                    {t.previewEducation}
+                    {getSectionTitle('education', t.previewEducation)}
                 </h2>
                 <div className="grid grid-cols-1 gap-6">
                     {education.map(edu => (
@@ -84,7 +90,7 @@ export const ElegantTemplate: React.FC<TemplateProps> = ({ data }) => {
         projects: projects.length > 0 && (
             <div className="mb-10">
                 <h2 className="text-2xl font-serif text-center mb-8 pb-2 border-b-2 inline-block mx-auto w-full max-w-xs" style={{ borderColor: themeColor }}>
-                    {t.previewProjects}
+                    {getSectionTitle('projects', t.previewProjects)}
                 </h2>
                 <div className="space-y-6">
                     {projects.map(proj => (
@@ -102,7 +108,7 @@ export const ElegantTemplate: React.FC<TemplateProps> = ({ data }) => {
         skills: skills.length > 0 && (
             <div className="mb-10 text-center">
                 <h2 className="text-2xl font-serif text-center mb-8 pb-2 border-b-2 inline-block mx-auto w-full max-w-xs" style={{ borderColor: themeColor }}>
-                    {t.previewSkills}
+                    {getSectionTitle('skills', t.previewSkills)}
                 </h2>
                 <div className="flex flex-wrap justify-center gap-x-8 gap-y-4">
                     {skills.map(group => (

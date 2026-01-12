@@ -27,9 +27,15 @@ interface TemplateProps {
 
 export const ClassicTemplate: React.FC<TemplateProps> = ({ data }) => {
     const { basics, summary, experience, education, projects, skills, custom, settings } = data;
-    const { themeColor, sectionOrder, sectionVisibility = {}, editMode, elementPositions = {} } = settings;
+    const { themeColor, sectionOrder, sectionVisibility = {}, editMode, elementPositions = {}, fieldLabels = {} } = settings;
     const { t } = useLanguage();
     const { reorderSections, updateElementPosition } = useResume();
+
+    // 获取 section 标题，优先使用自定义标题
+    const getSectionTitle = (sectionKey: string, defaultTitle: string) => {
+        const labelKey = `section${sectionKey.charAt(0).toUpperCase() + sectionKey.slice(1)}`;
+        return (fieldLabels as Record<string, string>)[labelKey] || defaultTitle;
+    };
 
     const sensors = useSensors(
         useSensor(PointerSensor, {
@@ -161,7 +167,7 @@ export const ClassicTemplate: React.FC<TemplateProps> = ({ data }) => {
         ),
         summary: summary && (
             <div className="mb-6">
-                <h2 className="text-lg font-bold uppercase mb-2 border-b pb-1" style={{ color: themeColor, borderColor: themeColor }}>{t.previewSummary}</h2>
+                <h2 className="text-lg font-bold uppercase mb-2 border-b pb-1" style={{ color: themeColor, borderColor: themeColor }}>{getSectionTitle('summary', t.previewSummary)}</h2>
                 <FreeDraggable
                     id="summary:content"
                     position={getPosition('summary:content')}
@@ -174,7 +180,7 @@ export const ClassicTemplate: React.FC<TemplateProps> = ({ data }) => {
         ),
         experience: experience.length > 0 && (
             <div className="mb-6">
-                <h2 className="text-lg font-bold uppercase mb-3 border-b pb-1" style={{ color: themeColor, borderColor: themeColor }}>{t.previewExperience}</h2>
+                <h2 className="text-lg font-bold uppercase mb-3 border-b pb-1" style={{ color: themeColor, borderColor: themeColor }}>{getSectionTitle('experience', t.previewExperience)}</h2>
                 <div className="space-y-4">
                     {experience.map(exp => (
                         <div key={exp.id} className="relative">
@@ -225,7 +231,7 @@ export const ClassicTemplate: React.FC<TemplateProps> = ({ data }) => {
         ),
         education: education.length > 0 && (
             <div className="mb-6">
-                <h2 className="text-lg font-bold uppercase mb-3 border-b pb-1" style={{ color: themeColor, borderColor: themeColor }}>{t.previewEducation}</h2>
+                <h2 className="text-lg font-bold uppercase mb-3 border-b pb-1" style={{ color: themeColor, borderColor: themeColor }}>{getSectionTitle('education', t.previewEducation)}</h2>
                 <div className="space-y-3">
                     {education.map(edu => (
                         <div key={edu.id} className="relative">
@@ -277,7 +283,7 @@ export const ClassicTemplate: React.FC<TemplateProps> = ({ data }) => {
         ),
         projects: projects.length > 0 && (
             <div className="mb-6">
-                <h2 className="text-lg font-bold uppercase mb-3 border-b pb-1" style={{ color: themeColor, borderColor: themeColor }}>{t.previewProjects}</h2>
+                <h2 className="text-lg font-bold uppercase mb-3 border-b pb-1" style={{ color: themeColor, borderColor: themeColor }}>{getSectionTitle('projects', t.previewProjects)}</h2>
                 <div className="space-y-3">
                     {projects.map(proj => (
                         <div key={proj.id} className="relative">
@@ -329,7 +335,7 @@ export const ClassicTemplate: React.FC<TemplateProps> = ({ data }) => {
         ),
         skills: skills.length > 0 && (
             <div className="mb-6">
-                <h2 className="text-lg font-bold uppercase mb-3 border-b pb-1" style={{ color: themeColor, borderColor: themeColor }}>{t.previewSkills}</h2>
+                <h2 className="text-lg font-bold uppercase mb-3 border-b pb-1" style={{ color: themeColor, borderColor: themeColor }}>{getSectionTitle('skills', t.previewSkills)}</h2>
                 <div className="grid grid-cols-1 gap-2">
                     {skills.map(skill => (
                         <FreeDraggable

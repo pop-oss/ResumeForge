@@ -9,8 +9,14 @@ interface TemplateProps {
 
 export const ProfessionalTemplate: React.FC<TemplateProps> = ({ data }) => {
     const { basics, summary, experience, education, projects, skills, custom, settings } = data;
-    const { themeColor, sectionOrder, sectionVisibility = {} } = settings;
+    const { themeColor, sectionOrder, sectionVisibility = {}, fieldLabels = {} } = settings;
     const { t } = useLanguage();
+
+    // 获取 section 标题，优先使用自定义标题
+    const getSectionTitle = (sectionKey: string, defaultTitle: string) => {
+        const labelKey = `section${sectionKey.charAt(0).toUpperCase() + sectionKey.slice(1)}`;
+        return (fieldLabels as Record<string, string>)[labelKey] || defaultTitle;
+    };
 
     const sectionRenderers: Record<string, React.ReactNode> = {
         basics: (
@@ -43,13 +49,13 @@ export const ProfessionalTemplate: React.FC<TemplateProps> = ({ data }) => {
         ),
         summary: summary && (
             <div className="mb-6">
-                <h2 className="text-sm font-bold uppercase tracking-wider mb-2" style={{ color: themeColor }}>{t.previewSummary}</h2>
+                <h2 className="text-sm font-bold uppercase tracking-wider mb-2" style={{ color: themeColor }}>{getSectionTitle('summary', t.previewSummary)}</h2>
                 <p className="text-sm leading-relaxed text-gray-700 border-l-2 pl-4" style={{ borderColor: themeColor }}>{summary}</p>
             </div>
         ),
         experience: experience.length > 0 && (
             <div className="mb-6">
-                <h2 className="text-sm font-bold uppercase tracking-wider mb-4" style={{ color: themeColor }}>{t.previewExperience}</h2>
+                <h2 className="text-sm font-bold uppercase tracking-wider mb-4" style={{ color: themeColor }}>{getSectionTitle('experience', t.previewExperience)}</h2>
                 <div className="space-y-5">
                     {experience.map(exp => (
                         <div key={exp.id}>
@@ -73,7 +79,7 @@ export const ProfessionalTemplate: React.FC<TemplateProps> = ({ data }) => {
         ),
         education: education.length > 0 && (
             <div className="mb-6">
-                <h2 className="text-sm font-bold uppercase tracking-wider mb-4" style={{ color: themeColor }}>{t.previewEducation}</h2>
+                <h2 className="text-sm font-bold uppercase tracking-wider mb-4" style={{ color: themeColor }}>{getSectionTitle('education', t.previewEducation)}</h2>
                 <div className="space-y-3">
                     {education.map(edu => (
                         <div key={edu.id} className="flex justify-between">
@@ -89,7 +95,7 @@ export const ProfessionalTemplate: React.FC<TemplateProps> = ({ data }) => {
         ),
         projects: projects.length > 0 && (
             <div className="mb-6">
-                <h2 className="text-sm font-bold uppercase tracking-wider mb-4" style={{ color: themeColor }}>{t.previewProjects}</h2>
+                <h2 className="text-sm font-bold uppercase tracking-wider mb-4" style={{ color: themeColor }}>{getSectionTitle('projects', t.previewProjects)}</h2>
                 <div className="space-y-4">
                     {projects.map(proj => (
                         <div key={proj.id}>
@@ -113,7 +119,7 @@ export const ProfessionalTemplate: React.FC<TemplateProps> = ({ data }) => {
         ),
         skills: skills.length > 0 && (
             <div className="mb-6">
-                <h2 className="text-sm font-bold uppercase tracking-wider mb-4" style={{ color: themeColor }}>{t.previewSkills}</h2>
+                <h2 className="text-sm font-bold uppercase tracking-wider mb-4" style={{ color: themeColor }}>{getSectionTitle('skills', t.previewSkills)}</h2>
                 <div className="space-y-2">
                     {skills.map(skill => (
                         <div key={skill.id} className="flex text-sm">

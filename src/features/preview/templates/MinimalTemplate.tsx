@@ -9,8 +9,14 @@ interface TemplateProps {
 
 export const MinimalTemplate: React.FC<TemplateProps> = ({ data }) => {
     const { basics, summary, experience, education, projects, skills, custom, settings } = data;
-    const { sectionOrder, sectionVisibility = {} } = settings;
+    const { sectionOrder, sectionVisibility = {}, fieldLabels = {} } = settings;
     const { t } = useLanguage();
+
+    // 获取 section 标题，优先使用自定义标题
+    const getSectionTitle = (sectionKey: string, defaultTitle: string) => {
+        const labelKey = `section${sectionKey.charAt(0).toUpperCase() + sectionKey.slice(1)}`;
+        return (fieldLabels as Record<string, string>)[labelKey] || defaultTitle;
+    };
 
     const sectionRenderers: Record<string, React.ReactNode> = {
         basics: (
@@ -44,7 +50,7 @@ export const MinimalTemplate: React.FC<TemplateProps> = ({ data }) => {
         ),
         experience: experience.length > 0 && (
             <div className="mb-8">
-                <h2 className="text-xs font-semibold uppercase tracking-[0.3em] text-gray-400 mb-6 text-center">{t.previewExperience}</h2>
+                <h2 className="text-xs font-semibold uppercase tracking-[0.3em] text-gray-400 mb-6 text-center">{getSectionTitle('experience', t.previewExperience)}</h2>
                 <div className="space-y-6">
                     {experience.map(exp => (
                         <div key={exp.id} className="text-center">
@@ -62,7 +68,7 @@ export const MinimalTemplate: React.FC<TemplateProps> = ({ data }) => {
         ),
         education: education.length > 0 && (
             <div className="mb-8">
-                <h2 className="text-xs font-semibold uppercase tracking-[0.3em] text-gray-400 mb-6 text-center">{t.previewEducation}</h2>
+                <h2 className="text-xs font-semibold uppercase tracking-[0.3em] text-gray-400 mb-6 text-center">{getSectionTitle('education', t.previewEducation)}</h2>
                 <div className="space-y-4 text-center">
                     {education.map(edu => (
                         <div key={edu.id}>
@@ -75,7 +81,7 @@ export const MinimalTemplate: React.FC<TemplateProps> = ({ data }) => {
         ),
         projects: projects.length > 0 && (
             <div className="mb-8">
-                <h2 className="text-xs font-semibold uppercase tracking-[0.3em] text-gray-400 mb-6 text-center">{t.previewProjects}</h2>
+                <h2 className="text-xs font-semibold uppercase tracking-[0.3em] text-gray-400 mb-6 text-center">{getSectionTitle('projects', t.previewProjects)}</h2>
                 <div className="space-y-4 text-center">
                     {projects.map(proj => (
                         <div key={proj.id}>
@@ -89,7 +95,7 @@ export const MinimalTemplate: React.FC<TemplateProps> = ({ data }) => {
         ),
         skills: skills.length > 0 && (
             <div className="mb-8">
-                <h2 className="text-xs font-semibold uppercase tracking-[0.3em] text-gray-400 mb-6 text-center">{t.previewSkills}</h2>
+                <h2 className="text-xs font-semibold uppercase tracking-[0.3em] text-gray-400 mb-6 text-center">{getSectionTitle('skills', t.previewSkills)}</h2>
                 <div className="flex flex-wrap justify-center gap-3">
                     {skills.flatMap(group => group.items).map((skill, i) => (
                         <span key={i} className="text-sm text-gray-600">{skill}</span>

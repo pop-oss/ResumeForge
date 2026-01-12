@@ -9,8 +9,14 @@ interface TemplateProps {
 
 export const ExecutiveTemplate: React.FC<TemplateProps> = ({ data }) => {
     const { basics, summary, experience, education, projects, skills, custom, settings } = data;
-    const { themeColor, sectionOrder, sectionVisibility = {} } = settings;
+    const { themeColor, sectionOrder, sectionVisibility = {}, fieldLabels = {} } = settings;
     const { t } = useLanguage();
+
+    // 获取 section 标题，优先使用自定义标题
+    const getSectionTitle = (sectionKey: string, defaultTitle: string) => {
+        const labelKey = `section${sectionKey.charAt(0).toUpperCase() + sectionKey.slice(1)}`;
+        return (fieldLabels as Record<string, string>)[labelKey] || defaultTitle;
+    };
 
     const sectionRenderers: Record<string, React.ReactNode> = {
         basics: (
@@ -46,7 +52,7 @@ export const ExecutiveTemplate: React.FC<TemplateProps> = ({ data }) => {
             <div className="mb-8">
                 <div className="flex items-center gap-4 mb-6">
                     <div className="flex-1 h-px bg-gray-200"></div>
-                    <h2 className="text-sm font-bold uppercase tracking-[0.2em]" style={{ color: themeColor }}>{t.previewExperience}</h2>
+                    <h2 className="text-sm font-bold uppercase tracking-[0.2em]" style={{ color: themeColor }}>{getSectionTitle('experience', t.previewExperience)}</h2>
                     <div className="flex-1 h-px bg-gray-200"></div>
                 </div>
                 <div className="space-y-6">
@@ -74,7 +80,7 @@ export const ExecutiveTemplate: React.FC<TemplateProps> = ({ data }) => {
             <div className="mb-8">
                 <div className="flex items-center gap-4 mb-6">
                     <div className="flex-1 h-px bg-gray-200"></div>
-                    <h2 className="text-sm font-bold uppercase tracking-[0.2em]" style={{ color: themeColor }}>{t.previewEducation}</h2>
+                    <h2 className="text-sm font-bold uppercase tracking-[0.2em]" style={{ color: themeColor }}>{getSectionTitle('education', t.previewEducation)}</h2>
                     <div className="flex-1 h-px bg-gray-200"></div>
                 </div>
                 <div className="grid grid-cols-2 gap-6">
@@ -93,7 +99,7 @@ export const ExecutiveTemplate: React.FC<TemplateProps> = ({ data }) => {
             <div className="mb-8">
                 <div className="flex items-center gap-4 mb-6">
                     <div className="flex-1 h-px bg-gray-200"></div>
-                    <h2 className="text-sm font-bold uppercase tracking-[0.2em]" style={{ color: themeColor }}>{t.previewProjects}</h2>
+                    <h2 className="text-sm font-bold uppercase tracking-[0.2em]" style={{ color: themeColor }}>{getSectionTitle('projects', t.previewProjects)}</h2>
                     <div className="flex-1 h-px bg-gray-200"></div>
                 </div>
                 <div className="space-y-4">
@@ -114,7 +120,7 @@ export const ExecutiveTemplate: React.FC<TemplateProps> = ({ data }) => {
             <div className="mb-8">
                 <div className="flex items-center gap-4 mb-6">
                     <div className="flex-1 h-px bg-gray-200"></div>
-                    <h2 className="text-sm font-bold uppercase tracking-[0.2em]" style={{ color: themeColor }}>{t.previewSkills}</h2>
+                    <h2 className="text-sm font-bold uppercase tracking-[0.2em]" style={{ color: themeColor }}>{getSectionTitle('skills', t.previewSkills)}</h2>
                     <div className="flex-1 h-px bg-gray-200"></div>
                 </div>
                 <div className="flex flex-wrap justify-center gap-3">
