@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
-import type { ResumeData, SectionOrder, ResumeSettings, ResumeBasics, ElementPosition, FieldOrderConfig, FieldVisibilityConfig } from './types';
-import { initialResumeData } from './data';
+import type { ResumeData, SectionOrder, ResumeSettings, ResumeBasics, ElementPosition, FieldOrderConfig } from './types';
+import { initialResumeData, DEFAULT_FIELD_ORDER, DEFAULT_FIELD_VISIBILITY } from './data';
 
 type SectionId = keyof FieldOrderConfig;
 
@@ -21,12 +21,26 @@ const ResumeContext = createContext<ResumeContextType | undefined>(undefined);
 
 const STORAGE_KEY = 'resume-builder-data';
 
+// 合并旧数据和默认配置，确保新字段有默认值
+const mergeWithDefaults = (data: ResumeData): ResumeData => {
+    return {
+        ...data,
+        settings: {
+            ...data.settings,
+            fieldOrder: data.settings.fieldOrder || DEFAULT_FIELD_ORDER,
+            fieldVisibility: data.settings.fieldVisibility || DEFAULT_FIELD_VISIBILITY,
+        },
+    };
+};
+
 export const ResumeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const [resumeData, setResumeState] = useState<ResumeData>(() => {
         const saved = localStorage.getItem(STORAGE_KEY);
         if (saved) {
             try {
-                return JSON.parse(saved);
+                const parsed = JSON.parse(saved);
+                // 合并默认配置，确保旧数据也有新字段
+                return mergeWithDefaults(parsed);
             } catch (e) {
                 console.error('Failed to parse resume data', e);
             }

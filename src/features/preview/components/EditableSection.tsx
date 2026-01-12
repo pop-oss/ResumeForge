@@ -16,6 +16,7 @@ import {
 } from '@dnd-kit/sortable';
 import { useResume } from '../../resume/ResumeContext';
 import type { FieldOrderConfig } from '../../resume/types';
+import { DEFAULT_FIELD_ORDER } from '../../resume/data';
 
 type SectionId = keyof FieldOrderConfig;
 
@@ -58,7 +59,7 @@ export const EditableSection: React.FC<EditableSectionProps> = ({
     })
   );
 
-  const currentFieldOrder = fieldOrder[sectionId] || [];
+  const currentFieldOrder = fieldOrder[sectionId] || DEFAULT_FIELD_ORDER[sectionId] || [];
   const currentFieldVisibility = fieldVisibility[sectionId] || {};
 
   const handleDragEnd = (event: DragEndEvent) => {

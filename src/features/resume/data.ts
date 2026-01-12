@@ -1,4 +1,51 @@
-import { ResumeData } from './types';
+import { ResumeData, FieldOrderConfig, FieldVisibilityConfig } from './types';
+
+// 默认字段顺序配置
+export const DEFAULT_FIELD_ORDER: FieldOrderConfig = {
+    basics: ['name', 'title', 'email', 'phone', 'city', 'website', 'linkedin', 'github'],
+    experience: ['company', 'role', 'city', 'dateRange', 'highlights'],
+    education: ['school', 'degree', 'major', 'dateRange', 'highlights'],
+    projects: ['name', 'link', 'techStack', 'highlights'],
+    skills: ['name', 'items'],
+};
+
+// 默认字段可见性配置
+export const DEFAULT_FIELD_VISIBILITY: FieldVisibilityConfig = {
+    basics: {
+        name: true,
+        title: true,
+        email: true,
+        phone: true,
+        city: true,
+        website: true,
+        linkedin: true,
+        github: true,
+    },
+    experience: {
+        company: true,
+        role: true,
+        city: true,
+        dateRange: true,
+        highlights: true,
+    },
+    education: {
+        school: true,
+        degree: true,
+        major: true,
+        dateRange: true,
+        highlights: true,
+    },
+    projects: {
+        name: true,
+        link: true,
+        techStack: true,
+        highlights: true,
+    },
+    skills: {
+        name: true,
+        items: true,
+    },
+};
 
 export const initialResumeData: ResumeData = {
     basics: {
@@ -104,5 +151,7 @@ export const initialResumeData: ResumeData = {
             'skills',
             'custom',
         ],
+        fieldOrder: DEFAULT_FIELD_ORDER,
+        fieldVisibility: DEFAULT_FIELD_VISIBILITY,
     },
 };

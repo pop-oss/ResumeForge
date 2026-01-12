@@ -184,30 +184,44 @@ export const ClassicTemplate: React.FC<TemplateProps> = ({ data }) => {
                 <div className="space-y-4">
                     {experience.map(exp => (
                         <div key={exp.id} className="relative">
-                            <FreeDraggable
-                                id={`experience:${exp.id}:company`}
-                                position={getPosition(`experience:${exp.id}:company`)}
-                                onPositionChange={handlePositionChange}
-                                editMode={editMode}
-                            >
-                                <div className="flex justify-between items-baseline mb-1">
+                            <div className="flex justify-between items-baseline mb-1">
+                                <FreeDraggable
+                                    id={`experience:${exp.id}:company`}
+                                    position={getPosition(`experience:${exp.id}:company`)}
+                                    onPositionChange={handlePositionChange}
+                                    editMode={editMode}
+                                >
                                     <h3 className="font-bold text-gray-800">{exp.company}</h3>
+                                </FreeDraggable>
+                                <FreeDraggable
+                                    id={`experience:${exp.id}:date`}
+                                    position={getPosition(`experience:${exp.id}:date`)}
+                                    onPositionChange={handlePositionChange}
+                                    editMode={editMode}
+                                >
                                     <span className="text-sm text-gray-600 font-medium">
                                         {exp.start} – {exp.current ? t.present : exp.end}
                                     </span>
-                                </div>
-                            </FreeDraggable>
-                            <FreeDraggable
-                                id={`experience:${exp.id}:role`}
-                                position={getPosition(`experience:${exp.id}:role`)}
-                                onPositionChange={handlePositionChange}
-                                editMode={editMode}
-                            >
-                                <div className="flex justify-between items-center mb-1">
+                                </FreeDraggable>
+                            </div>
+                            <div className="flex justify-between items-center mb-1">
+                                <FreeDraggable
+                                    id={`experience:${exp.id}:role`}
+                                    position={getPosition(`experience:${exp.id}:role`)}
+                                    onPositionChange={handlePositionChange}
+                                    editMode={editMode}
+                                >
                                     <span className="text-sm font-semibold italic text-gray-700">{exp.role}</span>
+                                </FreeDraggable>
+                                <FreeDraggable
+                                    id={`experience:${exp.id}:city`}
+                                    position={getPosition(`experience:${exp.id}:city`)}
+                                    onPositionChange={handlePositionChange}
+                                    editMode={editMode}
+                                >
                                     <span className="text-xs text-gray-500">{exp.city}</span>
-                                </div>
-                            </FreeDraggable>
+                                </FreeDraggable>
+                            </div>
                             <div className="ml-4 text-sm space-y-1 text-gray-700">
                                 {exp.highlights.filter(h => h.trim()).map((h, i) => (
                                     <FreeDraggable
@@ -235,29 +249,34 @@ export const ClassicTemplate: React.FC<TemplateProps> = ({ data }) => {
                 <div className="space-y-3">
                     {education.map(edu => (
                         <div key={edu.id} className="relative">
-                            <FreeDraggable
-                                id={`education:${edu.id}:school`}
-                                position={getPosition(`education:${edu.id}:school`)}
-                                onPositionChange={handlePositionChange}
-                                editMode={editMode}
-                            >
-                                <div className="flex justify-between items-baseline mb-1">
+                            <div className="flex justify-between items-baseline mb-1">
+                                <FreeDraggable
+                                    id={`education:${edu.id}:school`}
+                                    position={getPosition(`education:${edu.id}:school`)}
+                                    onPositionChange={handlePositionChange}
+                                    editMode={editMode}
+                                >
                                     <h3 className="font-bold text-gray-800">{edu.school}</h3>
+                                </FreeDraggable>
+                                <FreeDraggable
+                                    id={`education:${edu.id}:degree`}
+                                    position={getPosition(`education:${edu.id}:degree`)}
+                                    onPositionChange={handlePositionChange}
+                                    editMode={editMode}
+                                >
+                                    <span className="text-sm font-semibold text-gray-700">{edu.degree}, {edu.major}</span>
+                                </FreeDraggable>
+                                <FreeDraggable
+                                    id={`education:${edu.id}:date`}
+                                    position={getPosition(`education:${edu.id}:date`)}
+                                    onPositionChange={handlePositionChange}
+                                    editMode={editMode}
+                                >
                                     <span className="text-sm text-gray-600 font-medium">
                                         {edu.start} – {edu.end}
                                     </span>
-                                </div>
-                            </FreeDraggable>
-                            <FreeDraggable
-                                id={`education:${edu.id}:degree`}
-                                position={getPosition(`education:${edu.id}:degree`)}
-                                onPositionChange={handlePositionChange}
-                                editMode={editMode}
-                            >
-                                <div className="flex justify-between items-center mb-1">
-                                    <span className="text-sm font-semibold text-gray-700">{edu.degree}, {edu.major}</span>
-                                </div>
-                            </FreeDraggable>
+                                </FreeDraggable>
+                            </div>
                             {edu.highlights.length > 0 && (
                                 <div className="ml-4 text-sm space-y-1 text-gray-700 mt-1">
                                     {edu.highlights.filter(h => h.trim()).map((h, i) => (
