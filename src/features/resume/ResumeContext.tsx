@@ -125,6 +125,7 @@ export const ResumeProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         }));
     }, []);
 
+    
     return (
         <ResumeContext.Provider
             value={{
