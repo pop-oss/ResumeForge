@@ -244,7 +244,7 @@ export const ElegantTemplate: React.FC<TemplateProps> = ({ data }) => {
         ),
 
         summary: summary && (
-            <div className="mb-8 text-center px-10">
+            <div className="mb-8 text-center px-10 resume-section">
                 <div className="w-16 h-1 bg-slate-200 mx-auto mb-6" style={{ backgroundColor: themeColor }}></div>
                 <FreeDraggable
                     id="summary:content"
@@ -262,13 +262,13 @@ export const ElegantTemplate: React.FC<TemplateProps> = ({ data }) => {
             </div>
         ),
         experience: experience.length > 0 && (
-            <div className="mb-10">
-                <h2 className="text-2xl font-serif text-center mb-8 pb-2 border-b-2 inline-block mx-auto w-full max-w-xs" style={{ borderColor: themeColor }}>
+            <div className="mb-10 resume-section">
+                <h2 className="text-2xl font-serif text-center mb-8 pb-2 border-b-2 inline-block mx-auto w-full max-w-xs resume-section-header" style={{ borderColor: themeColor }}>
                     {getSectionTitle('experience', t.previewExperience)}
                 </h2>
                 <div className="space-y-10">
                     {experience.map(exp => (
-                        <div key={exp.id} className="relative pl-6 border-l-2 border-slate-200 ml-4 py-1">
+                        <div key={exp.id} className="relative pl-6 border-l-2 border-slate-200 ml-4 py-1 resume-item">
                             <div className={`absolute -left-[9px] top-1.5 w-4 h-4 rounded-full bg-white border-4 border-slate-300`} style={{ borderColor: themeColor }}></div>
                             <div className="flex justify-between items-baseline mb-2">
                                 <FreeDraggable
@@ -344,13 +344,13 @@ export const ElegantTemplate: React.FC<TemplateProps> = ({ data }) => {
         ),
 
         education: education.length > 0 && (
-            <div className="mb-10 text-center">
-                <h2 className="text-2xl font-serif text-center mb-8 pb-2 border-b-2 inline-block mx-auto w-full max-w-xs" style={{ borderColor: themeColor }}>
+            <div className="mb-10 text-center resume-section">
+                <h2 className="text-2xl font-serif text-center mb-8 pb-2 border-b-2 inline-block mx-auto w-full max-w-xs resume-section-header" style={{ borderColor: themeColor }}>
                     {getSectionTitle('education', t.previewEducation)}
                 </h2>
                 <div className="grid grid-cols-1 gap-6">
                     {education.map(edu => (
-                        <div key={edu.id}>
+                        <div key={edu.id} className="resume-item">
                             <FreeDraggable
                                 id={`education:${edu.id}:school`}
                                 position={getPosition(`education:${edu.id}:school`)}
@@ -407,13 +407,13 @@ export const ElegantTemplate: React.FC<TemplateProps> = ({ data }) => {
             </div>
         ),
         projects: projects.length > 0 && (
-            <div className="mb-10">
-                <h2 className="text-2xl font-serif text-center mb-8 pb-2 border-b-2 inline-block mx-auto w-full max-w-xs" style={{ borderColor: themeColor }}>
+            <div className="mb-10 resume-section">
+                <h2 className="text-2xl font-serif text-center mb-8 pb-2 border-b-2 inline-block mx-auto w-full max-w-xs resume-section-header" style={{ borderColor: themeColor }}>
                     {getSectionTitle('projects', t.previewProjects)}
                 </h2>
                 <div className="space-y-6">
                     {projects.map(proj => (
-                        <div key={proj.id} className="text-center">
+                        <div key={proj.id} className="text-center resume-item">
                             <FreeDraggable
                                 id={`projects:${proj.id}:name`}
                                 position={getPosition(`projects:${proj.id}:name`)}
@@ -459,8 +459,8 @@ export const ElegantTemplate: React.FC<TemplateProps> = ({ data }) => {
         ),
 
         skills: skills.length > 0 && (
-            <div className="mb-10 text-center">
-                <h2 className="text-2xl font-serif text-center mb-8 pb-2 border-b-2 inline-block mx-auto w-full max-w-xs" style={{ borderColor: themeColor }}>
+            <div className="mb-10 text-center resume-section">
+                <h2 className="text-2xl font-serif text-center mb-8 pb-2 border-b-2 inline-block mx-auto w-full max-w-xs resume-section-header" style={{ borderColor: themeColor }}>
                     {getSectionTitle('skills', t.previewSkills)}
                 </h2>
                 <div className="flex flex-wrap justify-center gap-x-8 gap-y-4">

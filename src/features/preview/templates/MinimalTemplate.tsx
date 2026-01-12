@@ -247,7 +247,7 @@ export const MinimalTemplate: React.FC<TemplateProps> = ({ data }) => {
             </div>
         ),
         summary: summary && (
-            <div className="mb-8">
+            <div className="mb-8 resume-section">
                 <FreeDraggable
                     id="summary:content"
                     position={getPosition('summary:content')}
@@ -264,11 +264,11 @@ export const MinimalTemplate: React.FC<TemplateProps> = ({ data }) => {
             </div>
         ),
         experience: experience.length > 0 && (
-            <div className="mb-8">
-                <h2 className="text-xs font-semibold uppercase tracking-[0.3em] text-gray-400 mb-6 text-center">{getSectionTitle('experience', t.previewExperience)}</h2>
+            <div className="mb-8 resume-section">
+                <h2 className="text-xs font-semibold uppercase tracking-[0.3em] text-gray-400 mb-6 text-center resume-section-header">{getSectionTitle('experience', t.previewExperience)}</h2>
                 <div className="space-y-6">
                     {experience.map(exp => (
-                        <div key={exp.id} className="text-center">
+                        <div key={exp.id} className="text-center resume-item">
                             <FreeDraggable
                                 id={`experience:${exp.id}:role`}
                                 position={getPosition(`experience:${exp.id}:role`)}
@@ -330,11 +330,11 @@ export const MinimalTemplate: React.FC<TemplateProps> = ({ data }) => {
             </div>
         ),
         education: education.length > 0 && (
-            <div className="mb-8">
-                <h2 className="text-xs font-semibold uppercase tracking-[0.3em] text-gray-400 mb-6 text-center">{getSectionTitle('education', t.previewEducation)}</h2>
+            <div className="mb-8 resume-section">
+                <h2 className="text-xs font-semibold uppercase tracking-[0.3em] text-gray-400 mb-6 text-center resume-section-header">{getSectionTitle('education', t.previewEducation)}</h2>
                 <div className="space-y-4 text-center">
                     {education.map(edu => (
-                        <div key={edu.id}>
+                        <div key={edu.id} className="resume-item">
                             <FreeDraggable
                                 id={`education:${edu.id}:degree`}
                                 position={getPosition(`education:${edu.id}:degree`)}
@@ -383,11 +383,11 @@ export const MinimalTemplate: React.FC<TemplateProps> = ({ data }) => {
             </div>
         ),
         projects: projects.length > 0 && (
-            <div className="mb-8">
-                <h2 className="text-xs font-semibold uppercase tracking-[0.3em] text-gray-400 mb-6 text-center">{getSectionTitle('projects', t.previewProjects)}</h2>
+            <div className="mb-8 resume-section">
+                <h2 className="text-xs font-semibold uppercase tracking-[0.3em] text-gray-400 mb-6 text-center resume-section-header">{getSectionTitle('projects', t.previewProjects)}</h2>
                 <div className="space-y-4 text-center">
                     {projects.map(proj => (
-                        <div key={proj.id}>
+                        <div key={proj.id} className="resume-item">
                             <FreeDraggable
                                 id={`projects:${proj.id}:name`}
                                 position={getPosition(`projects:${proj.id}:name`)}
@@ -430,8 +430,8 @@ export const MinimalTemplate: React.FC<TemplateProps> = ({ data }) => {
             </div>
         ),
         skills: skills.length > 0 && (
-            <div className="mb-8">
-                <h2 className="text-xs font-semibold uppercase tracking-[0.3em] text-gray-400 mb-6 text-center">{getSectionTitle('skills', t.previewSkills)}</h2>
+            <div className="mb-8 resume-section">
+                <h2 className="text-xs font-semibold uppercase tracking-[0.3em] text-gray-400 mb-6 text-center resume-section-header">{getSectionTitle('skills', t.previewSkills)}</h2>
                 <div className="flex flex-wrap justify-center gap-3">
                     {skills.flatMap(group => group.items.map((skill, i) => (
                         <FreeDraggable

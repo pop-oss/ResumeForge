@@ -225,8 +225,8 @@ export const ProfessionalTemplate: React.FC<TemplateProps> = ({ data }) => {
             </div>
         ),
         summary: summary && (
-            <div className="mb-6">
-                <h2 className="text-sm font-bold uppercase tracking-wider mb-2" style={{ color: themeColor }}>{getSectionTitle('summary', t.previewSummary)}</h2>
+            <div className="mb-6 resume-section">
+                <h2 className="text-sm font-bold uppercase tracking-wider mb-2 resume-section-header" style={{ color: themeColor }}>{getSectionTitle('summary', t.previewSummary)}</h2>
                 <FreeDraggable
                     id="summary:content"
                     position={getPosition('summary:content')}
@@ -243,11 +243,11 @@ export const ProfessionalTemplate: React.FC<TemplateProps> = ({ data }) => {
             </div>
         ),
         experience: experience.length > 0 && (
-            <div className="mb-6">
-                <h2 className="text-sm font-bold uppercase tracking-wider mb-4" style={{ color: themeColor }}>{getSectionTitle('experience', t.previewExperience)}</h2>
+            <div className="mb-6 resume-section">
+                <h2 className="text-sm font-bold uppercase tracking-wider mb-4 resume-section-header" style={{ color: themeColor }}>{getSectionTitle('experience', t.previewExperience)}</h2>
                 <div className="space-y-5">
                     {experience.map(exp => (
-                        <div key={exp.id}>
+                        <div key={exp.id} className="resume-item">
                             <div className="flex justify-between items-baseline">
                                 <FreeDraggable
                                     id={`experience:${exp.id}:role`}
@@ -328,11 +328,11 @@ export const ProfessionalTemplate: React.FC<TemplateProps> = ({ data }) => {
             </div>
         ),
         education: education.length > 0 && (
-            <div className="mb-6">
-                <h2 className="text-sm font-bold uppercase tracking-wider mb-4" style={{ color: themeColor }}>{getSectionTitle('education', t.previewEducation)}</h2>
+            <div className="mb-6 resume-section">
+                <h2 className="text-sm font-bold uppercase tracking-wider mb-4 resume-section-header" style={{ color: themeColor }}>{getSectionTitle('education', t.previewEducation)}</h2>
                 <div className="space-y-3">
                     {education.map(edu => (
-                        <div key={edu.id} className="flex justify-between">
+                        <div key={edu.id} className="flex justify-between resume-item">
                             <div>
                                 <FreeDraggable
                                     id={`education:${edu.id}:school`}
@@ -391,11 +391,11 @@ export const ProfessionalTemplate: React.FC<TemplateProps> = ({ data }) => {
             </div>
         ),
         projects: projects.length > 0 && (
-            <div className="mb-6">
-                <h2 className="text-sm font-bold uppercase tracking-wider mb-4" style={{ color: themeColor }}>{getSectionTitle('projects', t.previewProjects)}</h2>
+            <div className="mb-6 resume-section">
+                <h2 className="text-sm font-bold uppercase tracking-wider mb-4 resume-section-header" style={{ color: themeColor }}>{getSectionTitle('projects', t.previewProjects)}</h2>
                 <div className="space-y-4">
                     {projects.map(proj => (
-                        <div key={proj.id}>
+                        <div key={proj.id} className="resume-item">
                             <div className="flex items-baseline gap-2">
                                 <FreeDraggable
                                     id={`projects:${proj.id}:name`}
@@ -449,8 +449,8 @@ export const ProfessionalTemplate: React.FC<TemplateProps> = ({ data }) => {
             </div>
         ),
         skills: skills.length > 0 && (
-            <div className="mb-6">
-                <h2 className="text-sm font-bold uppercase tracking-wider mb-4" style={{ color: themeColor }}>{getSectionTitle('skills', t.previewSkills)}</h2>
+            <div className="mb-6 resume-section">
+                <h2 className="text-sm font-bold uppercase tracking-wider mb-4 resume-section-header" style={{ color: themeColor }}>{getSectionTitle('skills', t.previewSkills)}</h2>
                 <div className="space-y-2">
                     {skills.map(skill => (
                         <div key={skill.id} className="flex text-sm">

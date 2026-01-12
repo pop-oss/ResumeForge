@@ -3,8 +3,7 @@ import { Button } from '../../components/ui/button';
 import { useResume } from '../resume/ResumeContext';
 import { useLanguage } from '../../i18n';
 import { Download, Upload, Trash2, Printer, Palette, ZoomIn, ZoomOut, FileDown, Globe, Menu, X } from 'lucide-react';
-import html2canvas from 'html2canvas';
-import jsPDF from 'jspdf';
+import { renderPDF } from '../../lib/pdf/pdfRenderer';
 
 interface HeaderProps {
     zoom: number;
@@ -40,6 +39,33 @@ export const Header: React.FC<HeaderProps> = ({ zoom, setZoom }) => {
             })
             .join('\n');
 
+        // 智能分页CSS样式
+        const pageBreakStyles = `
+            /* 智能分页控制 */
+            .resume-section {
+                page-break-inside: avoid !important;
+                break-inside: avoid !important;
+            }
+            .resume-section-header {
+                page-break-after: avoid !important;
+                break-after: avoid !important;
+                page-break-inside: avoid !important;
+                break-inside: avoid !important;
+            }
+            .resume-item {
+                page-break-inside: avoid !important;
+                break-inside: avoid !important;
+            }
+            .skill-group {
+                page-break-inside: avoid !important;
+                break-inside: avoid !important;
+            }
+            .highlight-item {
+                page-break-inside: avoid !important;
+                break-inside: avoid !important;
+            }
+        `;
+
         const iframe = document.createElement('iframe');
         iframe.style.position = 'absolute';
         iframe.style.width = '0';
@@ -62,9 +88,10 @@ export const Header: React.FC<HeaderProps> = ({ zoom, setZoom }) => {
                 <title>简历</title>
                 <style>
                     ${styles}
-                    @page { size: A4; margin: 0; }
+                    ${pageBreakStyles}
+                    @page { size: A4; margin: 12mm; }
                     html, body { margin: 0; padding: 0; background: white; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-                    #print-content { width: 210mm; min-height: 297mm; margin: 0; padding: 0; background: white; }
+                    #print-content { width: 210mm; min-height: 297mm; margin: 0; padding: 12mm; background: white; box-sizing: border-box; }
                     .print\\:hidden, [class*="ring-2"], button, .cursor-move { display: none !important; }
                 </style>
             </head>
@@ -103,42 +130,23 @@ export const Header: React.FC<HeaderProps> = ({ zoom, setZoom }) => {
         const element = document.getElementById('resume-preview');
         if (!element) return;
 
-        const A4_WIDTH_MM = 210;
-        const A4_HEIGHT_MM = 297;
-        const MM_TO_PX = 3.7795275591;
-        void MM_TO_PX;
-
         const wasEditMode = resumeData.settings.editMode;
         const savedPositions = resumeData.settings.elementPositions;
         const savedZoom = zoom;
         
+        // 临时禁用编辑模式和重置缩放
         updateSettings({ editMode: false, elementPositions: {} });
         setZoom(1);
         await new Promise(resolve => setTimeout(resolve, 200));
 
         try {
-            const canvas = await html2canvas(element, {
+            // 使用智能分页PDF渲染器
+            const pdf = await renderPDF(element, {
                 scale: 3,
-                useCORS: true,
-                logging: false,
-                backgroundColor: '#ffffff',
-                width: element.scrollWidth,
-                height: element.scrollHeight,
-                windowWidth: element.scrollWidth,
-                windowHeight: element.scrollHeight,
+                pageWidth: 210,
+                pageHeight: 297,
+                margin: 12,
             });
-
-            const imgData = canvas.toDataURL('image/png', 1.0);
-            const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
-            const imgWidth = A4_WIDTH_MM;
-            const imgHeight = (canvas.height * imgWidth) / canvas.width;
-            const pageCount = Math.ceil(imgHeight / A4_HEIGHT_MM);
-            
-            for (let i = 0; i < pageCount; i++) {
-                if (i > 0) pdf.addPage();
-                const yOffset = -i * A4_HEIGHT_MM;
-                pdf.addImage(imgData, 'PNG', 0, yOffset, imgWidth, imgHeight, undefined, 'FAST');
-            }
             
             pdf.save(`resume-${resumeData.basics.name.replace(/\s+/g, '-').toLowerCase()}.pdf`);
         } catch (error) {

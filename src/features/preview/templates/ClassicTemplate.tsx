@@ -316,8 +316,8 @@ export const ClassicTemplate: React.FC<TemplateProps> = ({ data }) => {
             </div>
         ),
         summary: summary && (
-            <div className="mb-6">
-                <h2 className="text-lg font-bold uppercase mb-2 border-b pb-1" style={{ color: themeColor, borderColor: themeColor }}>{getSectionTitle('summary', t.previewSummary)}</h2>
+            <div className="mb-6 resume-section">
+                <h2 className="text-lg font-bold uppercase mb-2 border-b pb-1 resume-section-header" style={{ color: themeColor, borderColor: themeColor }}>{getSectionTitle('summary', t.previewSummary)}</h2>
                 <FreeDraggable
                     id="summary:content"
                     position={getPosition('summary:content')}
@@ -334,11 +334,11 @@ export const ClassicTemplate: React.FC<TemplateProps> = ({ data }) => {
             </div>
         ),
         experience: experience.length > 0 && (
-            <div className="mb-6">
-                <h2 className="text-lg font-bold uppercase mb-3 border-b pb-1" style={{ color: themeColor, borderColor: themeColor }}>{getSectionTitle('experience', t.previewExperience)}</h2>
+            <div className="mb-6 resume-section">
+                <h2 className="text-lg font-bold uppercase mb-3 border-b pb-1 resume-section-header" style={{ color: themeColor, borderColor: themeColor }}>{getSectionTitle('experience', t.previewExperience)}</h2>
                 <div className="space-y-4">
                     {experience.map(exp => (
-                        <div key={exp.id} className="relative">
+                        <div key={exp.id} className="relative resume-item">
                             <div className="flex justify-between items-baseline mb-1">
                                 <FreeDraggable
                                     id={`experience:${exp.id}:company`}
@@ -416,7 +416,7 @@ export const ClassicTemplate: React.FC<TemplateProps> = ({ data }) => {
                                         onValueChange={(value) => updateExperienceHighlight(exp.id, i, value)}
                                         editorClassName="text-sm text-gray-700"
                                     >
-                                        <div className="flex items-start">
+                                        <div className="flex items-start highlight-item">
                                             <span className="mr-2">•</span>
                                             <span className="leading-snug">{h}</span>
                                         </div>
@@ -429,11 +429,11 @@ export const ClassicTemplate: React.FC<TemplateProps> = ({ data }) => {
             </div>
         ),
         education: education.length > 0 && (
-            <div className="mb-6">
-                <h2 className="text-lg font-bold uppercase mb-3 border-b pb-1" style={{ color: themeColor, borderColor: themeColor }}>{getSectionTitle('education', t.previewEducation)}</h2>
+            <div className="mb-6 resume-section">
+                <h2 className="text-lg font-bold uppercase mb-3 border-b pb-1 resume-section-header" style={{ color: themeColor, borderColor: themeColor }}>{getSectionTitle('education', t.previewEducation)}</h2>
                 <div className="space-y-3">
                     {education.map(edu => (
-                        <div key={edu.id} className="relative">
+                        <div key={edu.id} className="relative resume-item">
                             <div className="flex justify-between items-baseline mb-1">
                                 <FreeDraggable
                                     id={`education:${edu.id}:school`}
@@ -502,7 +502,7 @@ export const ClassicTemplate: React.FC<TemplateProps> = ({ data }) => {
                                             onValueChange={(value) => updateEducationHighlight(edu.id, i, value)}
                                             editorClassName="text-sm text-gray-700"
                                         >
-                                            <div className="flex items-start">
+                                            <div className="flex items-start highlight-item">
                                                 <span className="mr-2">•</span>
                                                 <span>{h}</span>
                                             </div>
@@ -516,11 +516,11 @@ export const ClassicTemplate: React.FC<TemplateProps> = ({ data }) => {
             </div>
         ),
         projects: projects.length > 0 && (
-            <div className="mb-6">
-                <h2 className="text-lg font-bold uppercase mb-3 border-b pb-1" style={{ color: themeColor, borderColor: themeColor }}>{getSectionTitle('projects', t.previewProjects)}</h2>
+            <div className="mb-6 resume-section">
+                <h2 className="text-lg font-bold uppercase mb-3 border-b pb-1 resume-section-header" style={{ color: themeColor, borderColor: themeColor }}>{getSectionTitle('projects', t.previewProjects)}</h2>
                 <div className="space-y-3">
                     {projects.map(proj => (
-                        <div key={proj.id} className="relative">
+                        <div key={proj.id} className="relative resume-item">
                             <FreeDraggable
                                 id={`projects:${proj.id}:name`}
                                 position={getPosition(`projects:${proj.id}:name`)}
@@ -567,7 +567,7 @@ export const ClassicTemplate: React.FC<TemplateProps> = ({ data }) => {
                                         onValueChange={(value) => updateProjectHighlight(proj.id, i, value)}
                                         editorClassName="text-sm text-gray-700"
                                     >
-                                        <div className="flex items-start">
+                                        <div className="flex items-start highlight-item">
                                             <span className="mr-2">•</span>
                                             <span className="leading-snug">{h}</span>
                                         </div>
@@ -580,11 +580,11 @@ export const ClassicTemplate: React.FC<TemplateProps> = ({ data }) => {
             </div>
         ),
         skills: skills.length > 0 && (
-            <div className="mb-6">
-                <h2 className="text-lg font-bold uppercase mb-3 border-b pb-1" style={{ color: themeColor, borderColor: themeColor }}>{getSectionTitle('skills', t.previewSkills)}</h2>
+            <div className="mb-6 resume-section">
+                <h2 className="text-lg font-bold uppercase mb-3 border-b pb-1 resume-section-header" style={{ color: themeColor, borderColor: themeColor }}>{getSectionTitle('skills', t.previewSkills)}</h2>
                 <div className="grid grid-cols-1 gap-2">
                     {skills.map(skill => (
-                        <div key={skill.id} className="flex text-sm">
+                        <div key={skill.id} className="flex text-sm skill-group">
                             <FreeDraggable
                                 id={`skills:${skill.id}:name`}
                                 position={getPosition(`skills:${skill.id}:name`)}
@@ -617,11 +617,11 @@ export const ClassicTemplate: React.FC<TemplateProps> = ({ data }) => {
         custom: custom.length > 0 && (
             <>
                 {custom.map(section => (
-                    <div key={section.id} className="mb-6">
-                        <h2 className="text-lg font-bold uppercase mb-3 border-b pb-1" style={{ color: themeColor, borderColor: themeColor }}>{section.title}</h2>
+                    <div key={section.id} className="mb-6 resume-section">
+                        <h2 className="text-lg font-bold uppercase mb-3 border-b pb-1 resume-section-header" style={{ color: themeColor, borderColor: themeColor }}>{section.title}</h2>
                         <div className="space-y-3">
                             {section.items.map(item => (
-                                <div key={item.id} className="relative">
+                                <div key={item.id} className="relative resume-item">
                                     <div className="flex justify-between items-baseline mb-1">
                                         <div className="flex items-center gap-2">
                                             <FreeDraggable
@@ -681,7 +681,7 @@ export const ClassicTemplate: React.FC<TemplateProps> = ({ data }) => {
                                                     onValueChange={(value) => updateCustomItemHighlight(section.id, item.id, idx, value)}
                                                     editorClassName="text-sm text-gray-700"
                                                 >
-                                                    <div className="flex items-start">
+                                                    <div className="flex items-start highlight-item">
                                                         <span className="mr-2">•</span>
                                                         <span className="leading-snug">{i}</span>
                                                     </div>

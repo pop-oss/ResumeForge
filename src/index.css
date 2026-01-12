@@ -224,6 +224,40 @@
         break-inside: avoid !important;
     }
     
+    /* ===== 智能分页控制 ===== */
+    
+    /* Section容器 - 尽量保持完整 */
+    .resume-section {
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+    }
+    
+    /* Section标题 - 不能单独留在页面底部 */
+    .resume-section-header {
+        page-break-after: avoid !important;
+        break-after: avoid !important;
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+    }
+    
+    /* 条目（工作经历、项目等）- 保持完整 */
+    .resume-item {
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+    }
+    
+    /* 技能组 - 保持完整 */
+    .skill-group {
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+    }
+    
+    /* Highlight列表项 - 可以在项之间分页 */
+    .highlight-item {
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+    }
+    
     /* 确保颜色正确打印 */
     * {
         -webkit-print-color-adjust: exact !important;

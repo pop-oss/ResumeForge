@@ -232,11 +232,11 @@ export const CreativeTemplate: React.FC<TemplateProps> = ({ data }) => {
                     {/* Left Column (Narrow) */}
                     <div className="col-span-4 space-y-10">
                         {skills.length > 0 && (
-                            <div>
+                            <div className="resume-section">
                                 <h3 className="text-sm font-black uppercase tracking-widest mb-4 border-l-4 pl-2" style={{ borderColor: themeColor }}>{getSectionTitle('skills', t.previewSkills)}</h3>
                                 <div className="space-y-4">
                                     {skills.map(group => (
-                                        <div key={group.id}>
+                                        <div key={group.id} className="skill-group">
                                             <FreeDraggable
                                                 id={`skills:${group.id}:name`}
                                                 position={getPosition(`skills:${group.id}:name`)}
@@ -279,11 +279,11 @@ export const CreativeTemplate: React.FC<TemplateProps> = ({ data }) => {
                         )}
 
                         {education.length > 0 && (
-                            <div>
+                            <div className="resume-section">
                                 <h3 className="text-sm font-black uppercase tracking-widest mb-4 border-l-4 pl-2" style={{ borderColor: themeColor }}>{getSectionTitle('education', t.previewEducation)}</h3>
                                 <div className="space-y-4">
                                     {education.map(edu => (
-                                        <div key={edu.id}>
+                                        <div key={edu.id} className="resume-item">
                                             <FreeDraggable
                                                 id={`education:${edu.id}:school`}
                                                 position={getPosition(`education:${edu.id}:school`)}
@@ -333,7 +333,7 @@ export const CreativeTemplate: React.FC<TemplateProps> = ({ data }) => {
                         )}
 
                         {summary && (
-                            <div className="bg-slate-50 p-4 rounded-lg">
+                            <div className="bg-slate-50 p-4 rounded-lg resume-section">
                                 <h3 className="text-sm font-black uppercase tracking-widest mb-2 text-slate-400">{getSectionTitle('summary', t.previewSummary)}</h3>
                                 <FreeDraggable
                                     id="summary:content"
@@ -357,14 +357,14 @@ export const CreativeTemplate: React.FC<TemplateProps> = ({ data }) => {
                     {/* Right Column (Wide) */}
                     <div className="col-span-8 space-y-10">
                         {experience.length > 0 && (
-                            <div>
+                            <div className="resume-section">
                                 <h3 className="text-2xl font-black uppercase tracking-tight mb-6 flex items-center gap-3">
                                     <span className="w-8 h-1 rounded-full" style={{ backgroundColor: themeColor }}></span>
                                     {getSectionTitle('experience', t.previewExperience)}
                                 </h3>
                                 <div className="space-y-8">
                                     {experience.map(exp => (
-                                        <div key={exp.id} className="relative">
+                                        <div key={exp.id} className="relative resume-item">
                                             <div className="flex justify-between items-baseline mb-2">
                                                 <FreeDraggable
                                                     id={`experience:${exp.id}:role`}
@@ -441,14 +441,14 @@ export const CreativeTemplate: React.FC<TemplateProps> = ({ data }) => {
                         )}
 
                         {projects.length > 0 && (
-                            <div>
+                            <div className="resume-section">
                                 <h3 className="text-2xl font-black uppercase tracking-tight mb-6 flex items-center gap-3">
                                     <span className="w-8 h-1 rounded-full" style={{ backgroundColor: themeColor }}></span>
                                     {getSectionTitle('projects', t.previewProjects)}
                                 </h3>
                                 <div className="grid grid-cols-2 gap-6">
                                     {projects.map(proj => (
-                                        <div key={proj.id} className="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                                        <div key={proj.id} className="bg-slate-50 p-4 rounded-xl border border-slate-100 resume-item">
                                             <FreeDraggable
                                                 id={`projects:${proj.id}:name`}
                                                 position={getPosition(`projects:${proj.id}:name`)}

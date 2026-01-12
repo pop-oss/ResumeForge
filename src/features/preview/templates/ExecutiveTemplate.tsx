@@ -190,7 +190,7 @@ export const ExecutiveTemplate: React.FC<TemplateProps> = ({ data }) => {
             </div>
         ),
         summary: summary && (
-            <div className="mb-8 max-w-3xl mx-auto">
+            <div className="mb-8 max-w-3xl mx-auto resume-section">
                 <div className="relative py-4">
                     <div className="absolute left-0 top-0 text-6xl leading-none opacity-10" style={{ color: themeColor }}>"</div>
                     <FreeDraggable
@@ -211,15 +211,15 @@ export const ExecutiveTemplate: React.FC<TemplateProps> = ({ data }) => {
             </div>
         ),
         experience: experience.length > 0 && (
-            <div className="mb-8">
+            <div className="mb-8 resume-section">
                 <div className="flex items-center gap-4 mb-6">
                     <div className="flex-1 h-px bg-gray-200"></div>
-                    <h2 className="text-sm font-bold uppercase tracking-[0.2em]" style={{ color: themeColor }}>{getSectionTitle('experience', t.previewExperience)}</h2>
+                    <h2 className="text-sm font-bold uppercase tracking-[0.2em] resume-section-header" style={{ color: themeColor }}>{getSectionTitle('experience', t.previewExperience)}</h2>
                     <div className="flex-1 h-px bg-gray-200"></div>
                 </div>
                 <div className="space-y-6">
                     {experience.map(exp => (
-                        <div key={exp.id} className="grid grid-cols-[140px_1fr] gap-6">
+                        <div key={exp.id} className="grid grid-cols-[140px_1fr] gap-6 resume-item">
                             <div className="text-right">
                                 <FreeDraggable
                                     id={`experience:${exp.id}:start`}
@@ -301,15 +301,15 @@ export const ExecutiveTemplate: React.FC<TemplateProps> = ({ data }) => {
             </div>
         ),
         education: education.length > 0 && (
-            <div className="mb-8">
+            <div className="mb-8 resume-section">
                 <div className="flex items-center gap-4 mb-6">
                     <div className="flex-1 h-px bg-gray-200"></div>
-                    <h2 className="text-sm font-bold uppercase tracking-[0.2em]" style={{ color: themeColor }}>{getSectionTitle('education', t.previewEducation)}</h2>
+                    <h2 className="text-sm font-bold uppercase tracking-[0.2em] resume-section-header" style={{ color: themeColor }}>{getSectionTitle('education', t.previewEducation)}</h2>
                     <div className="flex-1 h-px bg-gray-200"></div>
                 </div>
                 <div className="grid grid-cols-2 gap-6">
                     {education.map(edu => (
-                        <div key={edu.id} className="text-center p-4 border border-gray-100 rounded">
+                        <div key={edu.id} className="text-center p-4 border border-gray-100 rounded resume-item">
                             <FreeDraggable
                                 id={`education:${edu.id}:school`}
                                 position={getPosition(`education:${edu.id}:school`)}
@@ -370,15 +370,15 @@ export const ExecutiveTemplate: React.FC<TemplateProps> = ({ data }) => {
             </div>
         ),
         projects: projects.length > 0 && (
-            <div className="mb-8">
+            <div className="mb-8 resume-section">
                 <div className="flex items-center gap-4 mb-6">
                     <div className="flex-1 h-px bg-gray-200"></div>
-                    <h2 className="text-sm font-bold uppercase tracking-[0.2em]" style={{ color: themeColor }}>{getSectionTitle('projects', t.previewProjects)}</h2>
+                    <h2 className="text-sm font-bold uppercase tracking-[0.2em] resume-section-header" style={{ color: themeColor }}>{getSectionTitle('projects', t.previewProjects)}</h2>
                     <div className="flex-1 h-px bg-gray-200"></div>
                 </div>
                 <div className="space-y-4">
                     {projects.map(proj => (
-                        <div key={proj.id} className="flex gap-4 items-start">
+                        <div key={proj.id} className="flex gap-4 items-start resume-item">
                             <div className="w-2 h-2 rounded-full mt-2 shrink-0" style={{ backgroundColor: themeColor }}></div>
                             <div>
                                 <FreeDraggable
@@ -434,10 +434,10 @@ export const ExecutiveTemplate: React.FC<TemplateProps> = ({ data }) => {
             </div>
         ),
         skills: skills.length > 0 && (
-            <div className="mb-8">
+            <div className="mb-8 resume-section">
                 <div className="flex items-center gap-4 mb-6">
                     <div className="flex-1 h-px bg-gray-200"></div>
-                    <h2 className="text-sm font-bold uppercase tracking-[0.2em]" style={{ color: themeColor }}>{getSectionTitle('skills', t.previewSkills)}</h2>
+                    <h2 className="text-sm font-bold uppercase tracking-[0.2em] resume-section-header" style={{ color: themeColor }}>{getSectionTitle('skills', t.previewSkills)}</h2>
                     <div className="flex-1 h-px bg-gray-200"></div>
                 </div>
                 <div className="flex flex-wrap justify-center gap-3">

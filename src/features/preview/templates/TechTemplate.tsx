@@ -233,7 +233,7 @@ export const TechTemplate: React.FC<TemplateProps> = ({ data }) => {
             </div>
         ),
         summary: summary && (
-            <div className="mb-6 p-4 bg-slate-50 rounded-lg border-l-4" style={{ borderColor: themeColor }}>
+            <div className="mb-6 p-4 bg-slate-50 rounded-lg border-l-4 resume-section" style={{ borderColor: themeColor }}>
                 <FreeDraggable
                     id="summary:content"
                     position={getPosition('summary:content')}
@@ -252,15 +252,15 @@ export const TechTemplate: React.FC<TemplateProps> = ({ data }) => {
             </div>
         ),
         experience: experience.length > 0 && (
-            <div className="mb-6">
-                <h2 className="text-lg font-bold mb-4 font-mono flex items-center gap-2">
+            <div className="mb-6 resume-section">
+                <h2 className="text-lg font-bold mb-4 font-mono flex items-center gap-2 resume-section-header">
                     <span style={{ color: themeColor }}>{'<'}</span>
                     {getSectionTitle('experience', t.previewExperience)}
                     <span style={{ color: themeColor }}>{'/>'}</span>
                 </h2>
                 <div className="space-y-4">
                     {experience.map(exp => (
-                        <div key={exp.id} className="p-4 bg-white rounded-lg border border-slate-200 hover:border-slate-300 transition-colors">
+                        <div key={exp.id} className="p-4 bg-white rounded-lg border border-slate-200 hover:border-slate-300 transition-colors resume-item">
                             <div className="flex justify-between items-start mb-2">
                                 <div>
                                     <FreeDraggable
@@ -338,15 +338,15 @@ export const TechTemplate: React.FC<TemplateProps> = ({ data }) => {
             </div>
         ),
         education: education.length > 0 && (
-            <div className="mb-6">
-                <h2 className="text-lg font-bold mb-4 font-mono flex items-center gap-2">
+            <div className="mb-6 resume-section">
+                <h2 className="text-lg font-bold mb-4 font-mono flex items-center gap-2 resume-section-header">
                     <span style={{ color: themeColor }}>{'<'}</span>
                     {getSectionTitle('education', t.previewEducation)}
                     <span style={{ color: themeColor }}>{'/>'}</span>
                 </h2>
                 <div className="space-y-3">
                     {education.map(edu => (
-                        <div key={edu.id} className="flex justify-between items-center p-3 bg-slate-50 rounded">
+                        <div key={edu.id} className="flex justify-between items-center p-3 bg-slate-50 rounded resume-item">
                             <div>
                                 <FreeDraggable
                                     id={`education:${edu.id}:school`}
@@ -405,15 +405,15 @@ export const TechTemplate: React.FC<TemplateProps> = ({ data }) => {
             </div>
         ),
         projects: projects.length > 0 && (
-            <div className="mb-6">
-                <h2 className="text-lg font-bold mb-4 font-mono flex items-center gap-2">
+            <div className="mb-6 resume-section">
+                <h2 className="text-lg font-bold mb-4 font-mono flex items-center gap-2 resume-section-header">
                     <span style={{ color: themeColor }}>{'<'}</span>
                     {getSectionTitle('projects', t.previewProjects)}
                     <span style={{ color: themeColor }}>{'/>'}</span>
                 </h2>
                 <div className="grid grid-cols-2 gap-3">
                     {projects.map(proj => (
-                        <div key={proj.id} className="p-4 bg-gradient-to-br from-slate-50 to-white rounded-lg border border-slate-200">
+                        <div key={proj.id} className="p-4 bg-gradient-to-br from-slate-50 to-white rounded-lg border border-slate-200 resume-item">
                             <div className="flex items-center gap-2 mb-2">
                                 <span className="w-2 h-2 rounded-full" style={{ backgroundColor: themeColor }}></span>
                                 <FreeDraggable
@@ -474,8 +474,8 @@ export const TechTemplate: React.FC<TemplateProps> = ({ data }) => {
             </div>
         ),
         skills: skills.length > 0 && (
-            <div className="mb-6">
-                <h2 className="text-lg font-bold mb-4 font-mono flex items-center gap-2">
+            <div className="mb-6 resume-section">
+                <h2 className="text-lg font-bold mb-4 font-mono flex items-center gap-2 resume-section-header">
                     <span style={{ color: themeColor }}>{'<'}</span>
                     {getSectionTitle('skills', t.previewSkills)}
                     <span style={{ color: themeColor }}>{'/>'}</span>

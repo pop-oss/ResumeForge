@@ -149,8 +149,8 @@ export const ModernTemplate: React.FC<TemplateProps> = ({ data }) => {
     const sectionRenderers: Record<string, React.ReactNode> = {
         basics: renderBasics(),
         summary: summary && (
-            <div className="mb-8">
-                <h2 className="text-md font-bold uppercase tracking-wider mb-3 text-slate-400">{getSectionTitle('summary', t.previewSummary)}</h2>
+            <div className="mb-8 resume-section">
+                <h2 className="text-md font-bold uppercase tracking-wider mb-3 text-slate-400 resume-section-header">{getSectionTitle('summary', t.previewSummary)}</h2>
                 {editMode ? (
                     <EditableField
                         fieldId="summary"
@@ -168,13 +168,13 @@ export const ModernTemplate: React.FC<TemplateProps> = ({ data }) => {
             </div>
         ),
         experience: experience.length > 0 && (
-            <div className="mb-8">
-                <h2 className="text-md font-bold uppercase tracking-wider mb-4 text-slate-400">{getSectionTitle('experience', t.previewExperience)}</h2>
+            <div className="mb-8 resume-section">
+                <h2 className="text-md font-bold uppercase tracking-wider mb-4 text-slate-400 resume-section-header">{getSectionTitle('experience', t.previewExperience)}</h2>
                 <EditableSection sectionId="experience">
                     {({ fieldOrder, fieldVisibility }) => (
                         <div className="space-y-6">
                             {experience.map(exp => (
-                                <div key={exp.id} className="relative pl-4 border-l-2" style={{ borderColor: themeColor }}>
+                                <div key={exp.id} className="relative pl-4 border-l-2 resume-item" style={{ borderColor: themeColor }}>
                                     {fieldOrder.map(fieldId => {
                                         const isVisible = fieldVisibility[fieldId] !== false;
                                         switch (fieldId) {
@@ -233,13 +233,13 @@ export const ModernTemplate: React.FC<TemplateProps> = ({ data }) => {
             </div>
         ),
         education: education.length > 0 && (
-            <div className="mb-8">
-                <h2 className="text-md font-bold uppercase tracking-wider mb-4 text-slate-400">{getSectionTitle('education', t.previewEducation)}</h2>
+            <div className="mb-8 resume-section">
+                <h2 className="text-md font-bold uppercase tracking-wider mb-4 text-slate-400 resume-section-header">{getSectionTitle('education', t.previewEducation)}</h2>
                 <EditableSection sectionId="education">
                     {({ fieldOrder, fieldVisibility }) => (
                         <div className="grid grid-cols-1 gap-4">
                             {education.map(edu => (
-                                <div key={edu.id}>
+                                <div key={edu.id} className="resume-item">
                                     {fieldOrder.map(fieldId => {
                                         const isVisible = fieldVisibility[fieldId] !== false;
                                         switch (fieldId) {
@@ -301,11 +301,11 @@ export const ModernTemplate: React.FC<TemplateProps> = ({ data }) => {
             </div>
         ),
         skills: skills.length > 0 && (
-            <div className="mb-8">
-                <h2 className="text-md font-bold uppercase tracking-wider mb-4 text-slate-400">{getSectionTitle('skills', t.previewSkills)}</h2>
+            <div className="mb-8 resume-section">
+                <h2 className="text-md font-bold uppercase tracking-wider mb-4 text-slate-400 resume-section-header">{getSectionTitle('skills', t.previewSkills)}</h2>
                 <div className="flex flex-wrap gap-2">
                     {skills.flatMap(group => group.items).map((skill, i) => (
-                        <span key={i} className="px-3 py-1 bg-slate-100 text-slate-700 rounded-full text-sm font-medium">
+                        <span key={i} className="px-3 py-1 bg-slate-100 text-slate-700 rounded-full text-sm font-medium skill-group">
                             {skill}
                         </span>
                     ))}
@@ -313,11 +313,11 @@ export const ModernTemplate: React.FC<TemplateProps> = ({ data }) => {
             </div>
         ),
         projects: projects.length > 0 && (
-            <div className="mb-8">
-                <h2 className="text-md font-bold uppercase tracking-wider mb-4 text-slate-400">{getSectionTitle('projects', t.previewProjects)}</h2>
+            <div className="mb-8 resume-section">
+                <h2 className="text-md font-bold uppercase tracking-wider mb-4 text-slate-400 resume-section-header">{getSectionTitle('projects', t.previewProjects)}</h2>
                 <div className="space-y-4">
                     {projects.map(proj => (
-                        <div key={proj.id}>
+                        <div key={proj.id} className="resume-item">
                             <div className="flex justify-between items-baseline mb-1">
                                 <h3 className="font-bold text-slate-800">{proj.name}</h3>
                                 {proj.link && <ExternalLink href={proj.link} className="text-xs text-blue-500 hover:underline" />}
@@ -331,11 +331,11 @@ export const ModernTemplate: React.FC<TemplateProps> = ({ data }) => {
         custom: custom.length > 0 && (
             <>
                 {custom.map(section => (
-                    <div key={section.id} className="mb-8">
-                        <h2 className="text-md font-bold uppercase tracking-wider mb-4 text-slate-400">{section.title}</h2>
+                    <div key={section.id} className="mb-8 resume-section">
+                        <h2 className="text-md font-bold uppercase tracking-wider mb-4 text-slate-400 resume-section-header">{section.title}</h2>
                         <div className="space-y-4">
                             {section.items.map(item => (
-                                <div key={item.id} className="relative pl-4 border-l-2" style={{ borderColor: themeColor }}>
+                                <div key={item.id} className="relative pl-4 border-l-2 resume-item" style={{ borderColor: themeColor }}>
                                     <div className="flex justify-between items-baseline mb-1">
                                         <div className="flex items-center gap-2">
                                             <h3 className="font-bold text-slate-800">{item.title}</h3>
