@@ -29,7 +29,7 @@ export const ClassicTemplate: React.FC<TemplateProps> = ({ data }) => {
     const { basics, summary, experience, education, projects, skills, custom, settings } = data;
     const { themeColor, sectionOrder, sectionVisibility = {}, editMode, elementPositions = {}, fieldLabels = {} } = settings;
     const { t } = useLanguage();
-    const { reorderSections, updateElementPosition } = useResume();
+    const { reorderSections, updateElementPosition, updateBasics, setResumeData } = useResume();
 
     // 获取 section 标题，优先使用自定义标题
     const getSectionTitle = (sectionKey: string, defaultTitle: string) => {
@@ -66,6 +66,124 @@ export const ClassicTemplate: React.FC<TemplateProps> = ({ data }) => {
         updateElementPosition(elementId, position);
     };
 
+    // 更新经验数据
+    const updateExperience = (expId: string, field: string, value: string) => {
+        const newExperience = experience.map(exp => 
+            exp.id === expId ? { ...exp, [field]: value } : exp
+        );
+        setResumeData({ ...data, experience: newExperience });
+    };
+
+    // 更新经验的 highlight
+    const updateExperienceHighlight = (expId: string, index: number, value: string) => {
+        const newExperience = experience.map(exp => {
+            if (exp.id === expId) {
+                const newHighlights = [...exp.highlights];
+                newHighlights[index] = value;
+                return { ...exp, highlights: newHighlights };
+            }
+            return exp;
+        });
+        setResumeData({ ...data, experience: newExperience });
+    };
+
+    // 更新教育数据
+    const updateEducation = (eduId: string, field: string, value: string) => {
+        const newEducation = education.map(edu => 
+            edu.id === eduId ? { ...edu, [field]: value } : edu
+        );
+        setResumeData({ ...data, education: newEducation });
+    };
+
+    // 更新教育的 highlight
+    const updateEducationHighlight = (eduId: string, index: number, value: string) => {
+        const newEducation = education.map(edu => {
+            if (edu.id === eduId) {
+                const newHighlights = [...edu.highlights];
+                newHighlights[index] = value;
+                return { ...edu, highlights: newHighlights };
+            }
+            return edu;
+        });
+        setResumeData({ ...data, education: newEducation });
+    };
+
+    // 更新项目数据
+    const updateProject = (projId: string, field: string, value: string) => {
+        const newProjects = projects.map(proj => 
+            proj.id === projId ? { ...proj, [field]: value } : proj
+        );
+        setResumeData({ ...data, projects: newProjects });
+    };
+
+    // 更新项目的 highlight
+    const updateProjectHighlight = (projId: string, index: number, value: string) => {
+        const newProjects = projects.map(proj => {
+            if (proj.id === projId) {
+                const newHighlights = [...proj.highlights];
+                newHighlights[index] = value;
+                return { ...proj, highlights: newHighlights };
+            }
+            return proj;
+        });
+        setResumeData({ ...data, projects: newProjects });
+    };
+
+    // 更新项目的 techStack
+    const updateProjectTechStack = (projId: string, value: string) => {
+        const newProjects = projects.map(proj => 
+            proj.id === projId ? { ...proj, techStack: value.split(',').map(s => s.trim()).filter(s => s) } : proj
+        );
+        setResumeData({ ...data, projects: newProjects });
+    };
+
+    // 更新技能数据
+    const updateSkillGroup = (skillId: string, field: string, value: string) => {
+        const newSkills = skills.map(skill => {
+            if (skill.id === skillId) {
+                if (field === 'items') {
+                    return { ...skill, items: value.split(',').map(s => s.trim()).filter(s => s) };
+                }
+                return { ...skill, [field]: value };
+            }
+            return skill;
+        });
+        setResumeData({ ...data, skills: newSkills });
+    };
+
+    // 更新自定义部分数据
+    const updateCustomItem = (sectionId: string, itemId: string, field: string, value: string) => {
+        const newCustom = custom.map(section => {
+            if (section.id === sectionId) {
+                const newItems = section.items.map(item => 
+                    item.id === itemId ? { ...item, [field]: value } : item
+                );
+                return { ...section, items: newItems };
+            }
+            return section;
+        });
+        setResumeData({ ...data, custom: newCustom });
+    };
+
+    // 更新自定义部分的 highlight
+    const updateCustomItemHighlight = (sectionId: string, itemId: string, index: number, value: string) => {
+        const newCustom = custom.map(section => {
+            if (section.id === sectionId) {
+                const newItems = section.items.map(item => {
+                    if (item.id === itemId) {
+                        const newItemItems = [...item.items];
+                        newItemItems[index] = value;
+                        return { ...item, items: newItemItems };
+                    }
+                    return item;
+                });
+                return { ...section, items: newItems };
+            }
+            return section;
+        });
+        setResumeData({ ...data, custom: newCustom });
+    };
+
     const sectionRenderers: Record<string, React.ReactNode> = {
         basics: (
             <div className="mb-6 border-b-2 pb-4 flex justify-between items-start" style={{ borderColor: themeColor }}>
@@ -75,6 +193,10 @@ export const ClassicTemplate: React.FC<TemplateProps> = ({ data }) => {
                         position={getPosition('basics:name')}
                         onPositionChange={handlePositionChange}
                         editMode={editMode}
+                        editable={true}
+                        value={basics.name}
+                        onValueChange={(value) => updateBasics({ name: value })}
+                        editorClassName="text-3xl font-bold uppercase tracking-wide"
                     >
                         <h1 className="text-3xl font-bold uppercase tracking-wide mb-2" style={{ color: themeColor }}>{basics.name}</h1>
                     </FreeDraggable>
@@ -83,6 +205,10 @@ export const ClassicTemplate: React.FC<TemplateProps> = ({ data }) => {
                         position={getPosition('basics:title')}
                         onPositionChange={handlePositionChange}
                         editMode={editMode}
+                        editable={true}
+                        value={basics.title}
+                        onValueChange={(value) => updateBasics({ title: value })}
+                        editorClassName="text-xl font-medium"
                     >
                         <p className="text-xl font-medium mb-2">{basics.title}</p>
                     </FreeDraggable>
@@ -93,6 +219,10 @@ export const ClassicTemplate: React.FC<TemplateProps> = ({ data }) => {
                                 position={getPosition('basics:email')}
                                 onPositionChange={handlePositionChange}
                                 editMode={editMode}
+                                editable={true}
+                                value={basics.email}
+                                onValueChange={(value) => updateBasics({ email: value })}
+                                editorClassName="text-sm"
                             >
                                 <a href={`mailto:${basics.email}`} className="hover:underline">{basics.email}</a>
                             </FreeDraggable>
@@ -103,6 +233,10 @@ export const ClassicTemplate: React.FC<TemplateProps> = ({ data }) => {
                                 position={getPosition('basics:phone')}
                                 onPositionChange={handlePositionChange}
                                 editMode={editMode}
+                                editable={true}
+                                value={basics.phone}
+                                onValueChange={(value) => updateBasics({ phone: value })}
+                                editorClassName="text-sm"
                             >
                                 <a href={`tel:${basics.phone}`} className="hover:underline">{basics.phone}</a>
                             </FreeDraggable>
@@ -113,6 +247,10 @@ export const ClassicTemplate: React.FC<TemplateProps> = ({ data }) => {
                                 position={getPosition('basics:city')}
                                 onPositionChange={handlePositionChange}
                                 editMode={editMode}
+                                editable={true}
+                                value={basics.city}
+                                onValueChange={(value) => updateBasics({ city: value })}
+                                editorClassName="text-sm"
                             >
                                 <span>{basics.city}</span>
                             </FreeDraggable>
@@ -123,6 +261,10 @@ export const ClassicTemplate: React.FC<TemplateProps> = ({ data }) => {
                                 position={getPosition('basics:website')}
                                 onPositionChange={handlePositionChange}
                                 editMode={editMode}
+                                editable={true}
+                                value={basics.website}
+                                onValueChange={(value) => updateBasics({ website: value })}
+                                editorClassName="text-sm"
                             >
                                 <ExternalLink href={basics.website} className="text-blue-600 hover:underline" />
                             </FreeDraggable>
@@ -133,6 +275,10 @@ export const ClassicTemplate: React.FC<TemplateProps> = ({ data }) => {
                                 position={getPosition('basics:linkedin')}
                                 onPositionChange={handlePositionChange}
                                 editMode={editMode}
+                                editable={true}
+                                value={basics.linkedin}
+                                onValueChange={(value) => updateBasics({ linkedin: value })}
+                                editorClassName="text-sm"
                             >
                                 <ExternalLink href={basics.linkedin} className="text-blue-600 hover:underline" />
                             </FreeDraggable>
@@ -143,6 +289,10 @@ export const ClassicTemplate: React.FC<TemplateProps> = ({ data }) => {
                                 position={getPosition('basics:github')}
                                 onPositionChange={handlePositionChange}
                                 editMode={editMode}
+                                editable={true}
+                                value={basics.github}
+                                onValueChange={(value) => updateBasics({ github: value })}
+                                editorClassName="text-sm"
                             >
                                 <ExternalLink href={basics.github} className="text-blue-600 hover:underline" />
                             </FreeDraggable>
@@ -173,6 +323,11 @@ export const ClassicTemplate: React.FC<TemplateProps> = ({ data }) => {
                     position={getPosition('summary:content')}
                     onPositionChange={handlePositionChange}
                     editMode={editMode}
+                    editable={true}
+                    value={summary}
+                    onValueChange={(value) => setResumeData({ ...data, summary: value })}
+                    multiline={true}
+                    editorClassName="text-sm leading-relaxed"
                 >
                     <p className="text-sm leading-relaxed">{summary}</p>
                 </FreeDraggable>
@@ -190,6 +345,10 @@ export const ClassicTemplate: React.FC<TemplateProps> = ({ data }) => {
                                     position={getPosition(`experience:${exp.id}:company`)}
                                     onPositionChange={handlePositionChange}
                                     editMode={editMode}
+                                    editable={true}
+                                    value={exp.company}
+                                    onValueChange={(value) => updateExperience(exp.id, 'company', value)}
+                                    editorClassName="font-bold text-gray-800"
                                 >
                                     <h3 className="font-bold text-gray-800">{exp.company}</h3>
                                 </FreeDraggable>
@@ -198,6 +357,20 @@ export const ClassicTemplate: React.FC<TemplateProps> = ({ data }) => {
                                     position={getPosition(`experience:${exp.id}:date`)}
                                     onPositionChange={handlePositionChange}
                                     editMode={editMode}
+                                    editable={true}
+                                    value={`${exp.start} – ${exp.current ? t.present : exp.end}`}
+                                    onValueChange={(value) => {
+                                        const parts = value.split('–').map(s => s.trim());
+                                        if (parts.length >= 2) {
+                                            updateExperience(exp.id, 'start', parts[0]);
+                                            if (parts[1] === t.present) {
+                                                setResumeData({ ...data, experience: experience.map(e => e.id === exp.id ? { ...e, current: true, end: '' } : e) });
+                                            } else {
+                                                setResumeData({ ...data, experience: experience.map(e => e.id === exp.id ? { ...e, current: false, end: parts[1] } : e) });
+                                            }
+                                        }
+                                    }}
+                                    editorClassName="text-sm text-gray-600 font-medium"
                                 >
                                     <span className="text-sm text-gray-600 font-medium">
                                         {exp.start} – {exp.current ? t.present : exp.end}
@@ -210,6 +383,10 @@ export const ClassicTemplate: React.FC<TemplateProps> = ({ data }) => {
                                     position={getPosition(`experience:${exp.id}:role`)}
                                     onPositionChange={handlePositionChange}
                                     editMode={editMode}
+                                    editable={true}
+                                    value={exp.role}
+                                    onValueChange={(value) => updateExperience(exp.id, 'role', value)}
+                                    editorClassName="text-sm font-semibold italic text-gray-700"
                                 >
                                     <span className="text-sm font-semibold italic text-gray-700">{exp.role}</span>
                                 </FreeDraggable>
@@ -218,6 +395,10 @@ export const ClassicTemplate: React.FC<TemplateProps> = ({ data }) => {
                                     position={getPosition(`experience:${exp.id}:city`)}
                                     onPositionChange={handlePositionChange}
                                     editMode={editMode}
+                                    editable={true}
+                                    value={exp.city || ''}
+                                    onValueChange={(value) => updateExperience(exp.id, 'city', value)}
+                                    editorClassName="text-xs text-gray-500"
                                 >
                                     <span className="text-xs text-gray-500">{exp.city}</span>
                                 </FreeDraggable>
@@ -230,6 +411,10 @@ export const ClassicTemplate: React.FC<TemplateProps> = ({ data }) => {
                                         position={getPosition(`experience:${exp.id}:highlight:${i}`)}
                                         onPositionChange={handlePositionChange}
                                         editMode={editMode}
+                                        editable={true}
+                                        value={h}
+                                        onValueChange={(value) => updateExperienceHighlight(exp.id, i, value)}
+                                        editorClassName="text-sm text-gray-700"
                                     >
                                         <div className="flex items-start">
                                             <span className="mr-2">•</span>
@@ -255,6 +440,10 @@ export const ClassicTemplate: React.FC<TemplateProps> = ({ data }) => {
                                     position={getPosition(`education:${edu.id}:school`)}
                                     onPositionChange={handlePositionChange}
                                     editMode={editMode}
+                                    editable={true}
+                                    value={edu.school}
+                                    onValueChange={(value) => updateEducation(edu.id, 'school', value)}
+                                    editorClassName="font-bold text-gray-800"
                                 >
                                     <h3 className="font-bold text-gray-800">{edu.school}</h3>
                                 </FreeDraggable>
@@ -263,6 +452,18 @@ export const ClassicTemplate: React.FC<TemplateProps> = ({ data }) => {
                                     position={getPosition(`education:${edu.id}:degree`)}
                                     onPositionChange={handlePositionChange}
                                     editMode={editMode}
+                                    editable={true}
+                                    value={`${edu.degree}, ${edu.major}`}
+                                    onValueChange={(value) => {
+                                        const parts = value.split(',').map(s => s.trim());
+                                        if (parts.length >= 2) {
+                                            updateEducation(edu.id, 'degree', parts[0]);
+                                            updateEducation(edu.id, 'major', parts.slice(1).join(', '));
+                                        } else {
+                                            updateEducation(edu.id, 'degree', value);
+                                        }
+                                    }}
+                                    editorClassName="text-sm font-semibold text-gray-700"
                                 >
                                     <span className="text-sm font-semibold text-gray-700">{edu.degree}, {edu.major}</span>
                                 </FreeDraggable>
@@ -271,6 +472,16 @@ export const ClassicTemplate: React.FC<TemplateProps> = ({ data }) => {
                                     position={getPosition(`education:${edu.id}:date`)}
                                     onPositionChange={handlePositionChange}
                                     editMode={editMode}
+                                    editable={true}
+                                    value={`${edu.start} – ${edu.end}`}
+                                    onValueChange={(value) => {
+                                        const parts = value.split('–').map(s => s.trim());
+                                        if (parts.length >= 2) {
+                                            updateEducation(edu.id, 'start', parts[0]);
+                                            updateEducation(edu.id, 'end', parts[1]);
+                                        }
+                                    }}
+                                    editorClassName="text-sm text-gray-600 font-medium"
                                 >
                                     <span className="text-sm text-gray-600 font-medium">
                                         {edu.start} – {edu.end}
@@ -286,6 +497,10 @@ export const ClassicTemplate: React.FC<TemplateProps> = ({ data }) => {
                                             position={getPosition(`education:${edu.id}:highlight:${i}`)}
                                             onPositionChange={handlePositionChange}
                                             editMode={editMode}
+                                            editable={true}
+                                            value={h}
+                                            onValueChange={(value) => updateEducationHighlight(edu.id, i, value)}
+                                            editorClassName="text-sm text-gray-700"
                                         >
                                             <div className="flex items-start">
                                                 <span className="mr-2">•</span>
@@ -311,6 +526,10 @@ export const ClassicTemplate: React.FC<TemplateProps> = ({ data }) => {
                                 position={getPosition(`projects:${proj.id}:name`)}
                                 onPositionChange={handlePositionChange}
                                 editMode={editMode}
+                                editable={true}
+                                value={proj.name}
+                                onValueChange={(value) => updateProject(proj.id, 'name', value)}
+                                editorClassName="font-bold text-gray-800"
                             >
                                 <div className="flex justify-between items-baseline mb-1">
                                     <div className="flex items-center gap-2">
@@ -325,6 +544,10 @@ export const ClassicTemplate: React.FC<TemplateProps> = ({ data }) => {
                                     position={getPosition(`projects:${proj.id}:techStack`)}
                                     onPositionChange={handlePositionChange}
                                     editMode={editMode}
+                                    editable={true}
+                                    value={proj.techStack.join(', ')}
+                                    onValueChange={(value) => updateProjectTechStack(proj.id, value)}
+                                    editorClassName="text-xs text-gray-600"
                                 >
                                     <div className="text-xs text-gray-600 mb-1 font-medium">
                                         <span className="italic">{t.techStack}:</span> {proj.techStack.join(', ')}
@@ -339,6 +562,10 @@ export const ClassicTemplate: React.FC<TemplateProps> = ({ data }) => {
                                         position={getPosition(`projects:${proj.id}:highlight:${i}`)}
                                         onPositionChange={handlePositionChange}
                                         editMode={editMode}
+                                        editable={true}
+                                        value={h}
+                                        onValueChange={(value) => updateProjectHighlight(proj.id, i, value)}
+                                        editorClassName="text-sm text-gray-700"
                                     >
                                         <div className="flex items-start">
                                             <span className="mr-2">•</span>
@@ -357,18 +584,32 @@ export const ClassicTemplate: React.FC<TemplateProps> = ({ data }) => {
                 <h2 className="text-lg font-bold uppercase mb-3 border-b pb-1" style={{ color: themeColor, borderColor: themeColor }}>{getSectionTitle('skills', t.previewSkills)}</h2>
                 <div className="grid grid-cols-1 gap-2">
                     {skills.map(skill => (
-                        <FreeDraggable
-                            key={skill.id}
-                            id={`skills:${skill.id}`}
-                            position={getPosition(`skills:${skill.id}`)}
-                            onPositionChange={handlePositionChange}
-                            editMode={editMode}
-                        >
-                            <div className="flex text-sm">
+                        <div key={skill.id} className="flex text-sm">
+                            <FreeDraggable
+                                id={`skills:${skill.id}:name`}
+                                position={getPosition(`skills:${skill.id}:name`)}
+                                onPositionChange={handlePositionChange}
+                                editMode={editMode}
+                                editable={true}
+                                value={skill.name}
+                                onValueChange={(value) => updateSkillGroup(skill.id, 'name', value)}
+                                editorClassName="font-bold text-gray-800"
+                            >
                                 <span className="font-bold w-32 shrink-0 text-gray-800">{skill.name}:</span>
+                            </FreeDraggable>
+                            <FreeDraggable
+                                id={`skills:${skill.id}:items`}
+                                position={getPosition(`skills:${skill.id}:items`)}
+                                onPositionChange={handlePositionChange}
+                                editMode={editMode}
+                                editable={true}
+                                value={skill.items.join(', ')}
+                                onValueChange={(value) => updateSkillGroup(skill.id, 'items', value)}
+                                editorClassName="text-gray-700"
+                            >
                                 <span className="text-gray-700 flex-1">{skill.items.join(', ')}</span>
-                            </div>
-                        </FreeDraggable>
+                            </FreeDraggable>
+                        </div>
                     ))}
                 </div>
             </div>
@@ -381,26 +622,47 @@ export const ClassicTemplate: React.FC<TemplateProps> = ({ data }) => {
                         <div className="space-y-3">
                             {section.items.map(item => (
                                 <div key={item.id} className="relative">
-                                    <FreeDraggable
-                                        id={`custom:${section.id}:${item.id}:title`}
-                                        position={getPosition(`custom:${section.id}:${item.id}:title`)}
-                                        onPositionChange={handlePositionChange}
-                                        editMode={editMode}
-                                    >
-                                        <div className="flex justify-between items-baseline mb-1">
-                                            <div className="flex items-center gap-2">
+                                    <div className="flex justify-between items-baseline mb-1">
+                                        <div className="flex items-center gap-2">
+                                            <FreeDraggable
+                                                id={`custom:${section.id}:${item.id}:title`}
+                                                position={getPosition(`custom:${section.id}:${item.id}:title`)}
+                                                onPositionChange={handlePositionChange}
+                                                editMode={editMode}
+                                                editable={true}
+                                                value={item.title}
+                                                onValueChange={(value) => updateCustomItem(section.id, item.id, 'title', value)}
+                                                editorClassName="font-bold text-gray-800"
+                                            >
                                                 <h3 className="font-bold text-gray-800">{item.title}</h3>
-                                                {item.link && <ExternalLink href={item.link} className="text-xs text-blue-600 underline" />}
-                                            </div>
-                                            {item.date && <span className="text-sm text-gray-600 font-medium">{item.date}</span>}
+                                            </FreeDraggable>
+                                            {item.link && <ExternalLink href={item.link} className="text-xs text-blue-600 underline" />}
                                         </div>
-                                    </FreeDraggable>
+                                        {item.date && (
+                                            <FreeDraggable
+                                                id={`custom:${section.id}:${item.id}:date`}
+                                                position={getPosition(`custom:${section.id}:${item.id}:date`)}
+                                                onPositionChange={handlePositionChange}
+                                                editMode={editMode}
+                                                editable={true}
+                                                value={item.date}
+                                                onValueChange={(value) => updateCustomItem(section.id, item.id, 'date', value)}
+                                                editorClassName="text-sm text-gray-600 font-medium"
+                                            >
+                                                <span className="text-sm text-gray-600 font-medium">{item.date}</span>
+                                            </FreeDraggable>
+                                        )}
+                                    </div>
                                     {item.subtitle && (
                                         <FreeDraggable
                                             id={`custom:${section.id}:${item.id}:subtitle`}
                                             position={getPosition(`custom:${section.id}:${item.id}:subtitle`)}
                                             onPositionChange={handlePositionChange}
                                             editMode={editMode}
+                                            editable={true}
+                                            value={item.subtitle}
+                                            onValueChange={(value) => updateCustomItem(section.id, item.id, 'subtitle', value)}
+                                            editorClassName="text-sm font-semibold italic text-gray-700"
                                         >
                                             <p className="text-sm font-semibold italic text-gray-700 mb-1">{item.subtitle}</p>
                                         </FreeDraggable>
@@ -414,6 +676,10 @@ export const ClassicTemplate: React.FC<TemplateProps> = ({ data }) => {
                                                     position={getPosition(`custom:${section.id}:${item.id}:item:${idx}`)}
                                                     onPositionChange={handlePositionChange}
                                                     editMode={editMode}
+                                                    editable={true}
+                                                    value={i}
+                                                    onValueChange={(value) => updateCustomItemHighlight(section.id, item.id, idx, value)}
+                                                    editorClassName="text-sm text-gray-700"
                                                 >
                                                     <div className="flex items-start">
                                                         <span className="mr-2">•</span>

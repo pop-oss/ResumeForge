@@ -112,22 +112,23 @@ describe('Property 6: Field Order Uniformity', () => {
           { minLength: 3, maxLength: 6 }
         ),
         fc.constantFrom(
-          ['company', 'role', 'city'],
-          ['role', 'company', 'city'],
-          ['city', 'role', 'company']
+          ['company', 'role', 'city'] as const,
+          ['role', 'company', 'city'] as const,
+          ['city', 'role', 'company'] as const
         ),
         (items, fieldOrder) => {
+          const fieldOrderArray = [...fieldOrder] as string[];
           const getFieldValue = (item: typeof items[0], fieldId: string) => {
             return (item as Record<string, string | undefined>)[fieldId];
           };
 
-          const rendered = renderItemsWithFieldOrder(items, fieldOrder, getFieldValue);
+          const rendered = renderItemsWithFieldOrder(items, fieldOrderArray, getFieldValue);
 
           // For each item, the rendered fields should be a subsequence of fieldOrder
           rendered.forEach(item => {
             let lastIndex = -1;
             item.renderedFields.forEach(field => {
-              const currentIndex = fieldOrder.indexOf(field);
+              const currentIndex = fieldOrderArray.indexOf(field);
               expect(currentIndex).toBeGreaterThan(lastIndex);
               lastIndex = currentIndex;
             });

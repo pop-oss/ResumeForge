@@ -2,6 +2,7 @@ import * as React from "react";
 import { useState, useRef, useCallback, useEffect } from "react";
 import { cn } from "../../lib/utils";
 import { Move } from "lucide-react";
+import { InlineEditor } from "./inline-editor";
 
 export interface FreeDraggableProps {
   id: string;
@@ -15,16 +16,18 @@ export interface FreeDraggableProps {
   snapY?: number;
   /** 容器选择器，用于碰撞检测 */
   containerSelector?: string;
-  /** 是否可编辑（用于内联编辑功能，当前未实现） */
+  /** 是否可编辑 */
   editable?: boolean;
-  /** 编辑值（用于内联编辑功能，当前未实现） */
+  /** 编辑值 */
   value?: string;
-  /** 值变更回调（用于内联编辑功能，当前未实现） */
+  /** 值变更回调 */
   onValueChange?: (value: string) => void;
-  /** 编辑器样式类名（用于内联编辑功能，当前未实现） */
+  /** 编辑器样式类名 */
   editorClassName?: string;
-  /** 是否多行编辑（用于内联编辑功能，当前未实现） */
+  /** 是否多行编辑 */
   multiline?: boolean;
+  /** 占位符文本 */
+  placeholder?: string;
 }
 
 /**
@@ -135,10 +138,17 @@ export const FreeDraggable: React.FC<FreeDraggableProps> = ({
   snapX = 8,
   snapY = 24,
   containerSelector,
+  editable = false,
+  value = "",
+  onValueChange,
+  editorClassName = "",
+  multiline = false,
+  placeholder = "",
 }) => {
   const [isDragging, setIsDragging] = useState(false);
   const [currentPos, setCurrentPos] = useState(position);
   const [hasCollision, setHasCollision] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
   const dragRef = useRef<HTMLDivElement>(null);
   const startPosRef = useRef({ x: 0, y: 0 });
   const startMouseRef = useRef({ x: 0, y: 0 });
@@ -242,6 +252,29 @@ export const FreeDraggable: React.FC<FreeDraggableProps> = ({
     transform: `translate(${currentPos.x}px, ${currentPos.y}px)`,
   } : {};
 
+  // 处理编辑值变更
+  const handleValueChange = useCallback((newValue: string) => {
+    onValueChange?.(newValue);
+  }, [onValueChange]);
+
+  // 渲染内容：如果可编辑且在编辑模式，使用 InlineEditor
+  const renderContent = () => {
+    if (editable && editMode && value !== undefined) {
+      return (
+        <InlineEditor
+          value={value}
+          onChange={handleValueChange}
+          multiline={multiline}
+          placeholder={placeholder}
+          className={editorClassName}
+          editMode={editMode}
+          disabled={disabled || isDragging}
+        />
+      );
+    }
+    return children;
+  };
+
   // 编辑和非编辑模式使用相同的 div 结构，保证布局一致
   return (
     <div
@@ -251,7 +284,7 @@ export const FreeDraggable: React.FC<FreeDraggableProps> = ({
         "group relative",
         isDragging && "z-50 opacity-80",
         hasCollision && isDragging && "outline outline-2 outline-red-400 rounded",
-        editMode && !hasCollision && "hover:outline hover:outline-1 hover:outline-blue-300 hover:outline-dashed rounded print:outline-none", 
+        editMode && !hasCollision && !editable && "hover:outline hover:outline-1 hover:outline-blue-300 hover:outline-dashed rounded print:outline-none", 
         className
       )}
       style={{
@@ -276,7 +309,7 @@ export const FreeDraggable: React.FC<FreeDraggableProps> = ({
           <Move className="h-3 w-3" />
         </button>
       )}
-      {children}
+      {renderContent()}
     </div>
   );
 };
