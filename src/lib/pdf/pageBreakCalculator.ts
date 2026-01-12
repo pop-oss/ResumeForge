@@ -162,6 +162,8 @@ export function calculateBreakPoints(
   // 计算页面可用高度 (px)
   const pageContentHeight = (config.pageHeightMm - config.marginMm * 2) * MM_TO_PX;
   const minHeaderSpace = config.minSectionHeaderSpace * MM_TO_PX;
+  // 页面底部安全边距 (至少留15mm空白)
+  const bottomSafeMargin = 15 * MM_TO_PX;
 
   let currentPageStart = 0;
   let currentPageEnd = pageContentHeight;
@@ -169,6 +171,18 @@ export function calculateBreakPoints(
   for (let i = 0; i < blocks.length; i++) {
     const block = blocks[i];
     const blockEnd = block.top + block.height;
+
+    // 检查section标题是否有足够的后续空间（提前检查，在超出页面之前）
+    if (block.type === 'section-header' || block.type === 'section') {
+      const remainingSpace = currentPageEnd - block.top;
+      // 如果剩余空间不足以放下标题+至少一个条目（minHeaderSpace），则提前分页
+      if (remainingSpace < minHeaderSpace + bottomSafeMargin) {
+        breakPoints.push(block.top);
+        currentPageStart = block.top;
+        currentPageEnd = block.top + pageContentHeight;
+        continue;
+      }
+    }
 
     // 检查当前块是否超出当前页
     if (blockEnd > currentPageEnd) {
@@ -179,7 +193,8 @@ export function calculateBreakPoints(
         currentPageStart,
         currentPageEnd,
         minHeaderSpace,
-        pageContentHeight
+        pageContentHeight,
+        bottomSafeMargin
       );
 
       // 如果找不到合适的分页点，强制在当前位置分页
@@ -213,17 +228,6 @@ export function calculateBreakPoints(
         }
       }
     }
-
-    // 检查section标题是否有足够的后续空间
-    if (block.type === 'section-header') {
-      const remainingSpace = currentPageEnd - (block.top + block.height);
-      if (remainingSpace < minHeaderSpace && block.canBreak) {
-        // 将标题移到下一页
-        breakPoints.push(block.top);
-        currentPageStart = block.top;
-        currentPageEnd = block.top + pageContentHeight;
-      }
-    }
   }
 
   return {
@@ -242,7 +246,8 @@ function findBestBreakPoint(
   pageStart: number,
   pageEnd: number,
   minHeaderSpace: number,
-  pageContentHeight: number
+  pageContentHeight: number,
+  bottomSafeMargin: number
 ): number | null {
   // 从当前块向前查找可以分页的位置
   for (let i = currentIndex; i >= 0; i--) {
@@ -254,12 +259,12 @@ function findBestBreakPoint(
     // 检查前一个块是否必须与当前块在同一页
     if (i > 0 && blocks[i - 1].mustKeepWithNext) continue;
 
-    // 检查分页点是否在当前页范围内
-    if (block.top >= pageStart && block.top <= pageEnd) {
-      // 检查是否是section标题，需要确保有足够空间
-      if (block.type === 'section-header') {
+    // 检查分页点是否在当前页范围内（留出底部安全边距）
+    if (block.top >= pageStart && block.top <= pageEnd - bottomSafeMargin) {
+      // 检查是否是section或section标题，需要确保有足够空间
+      if (block.type === 'section-header' || block.type === 'section') {
         const remainingSpace = pageEnd - block.top;
-        if (remainingSpace < minHeaderSpace) {
+        if (remainingSpace < minHeaderSpace + bottomSafeMargin) {
           continue; // 空间不足，继续向前查找
         }
       }
