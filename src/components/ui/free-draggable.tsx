@@ -87,12 +87,13 @@ export const FreeDraggable: React.FC<FreeDraggableProps> = ({
 
   const hasOffset = currentPos.x !== 0 || currentPos.y !== 0;
 
-  // 使用 margin 来调整位置，这样会影响文档流，不会留空白
+  // 使用 margin 来调整位置
+  // marginTop 负值会让元素向上移动，同时自动减少元素占用的顶部空间
+  // marginTop 正值会让元素向下移动，增加顶部空间
+  // 不需要额外调整 marginBottom，CSS 的 margin 机制会自动处理文档流
   const offsetStyle: React.CSSProperties = hasOffset ? {
     marginLeft: currentPos.x,
     marginTop: currentPos.y,
-    // 负的 margin-bottom 来补偿向下移动造成的额外空间
-    marginBottom: currentPos.y < 0 ? Math.abs(currentPos.y) : -currentPos.y,
   } : {};
 
   // 非编辑模式，直接返回子元素（不添加任何包装）
