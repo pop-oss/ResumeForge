@@ -5,7 +5,6 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   plugins: [react()],
   // GitHub Pages 部署时需要设置 base 路径
-  // 如果部署到 https://用户名.github.io/仓库名/，需要设置为 '/仓库名/'
-  // 如果部署到自定义域名或 https://用户名.github.io/，设置为 '/'
-  base: process.env.GITHUB_ACTIONS ? '/resume-forge/' : '/',
+  // 必须与 GitHub 仓库名大小写完全一致
+  base: process.env.GITHUB_ACTIONS ? '/ResumeForge/' : '/',
 })
