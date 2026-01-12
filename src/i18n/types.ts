@@ -39,6 +39,7 @@ export interface Translations {
   // Experience form
   company: string;
   role: string;
+  city: string;
   startDate: string;
   endDate: string;
   present: string;

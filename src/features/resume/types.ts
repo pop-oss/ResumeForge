@@ -103,6 +103,7 @@ export interface FieldLabels {
     // 工作经历字段
     company?: string;     // 公司
     role?: string;        // 职位
+    expCity?: string;     // 工作地点
     expStart?: string;    // 开始时间
     expEnd?: string;      // 结束时间
     expHighlights?: string; // 工作内容

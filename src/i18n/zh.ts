@@ -39,6 +39,7 @@ export const zh: Translations = {
   // Experience form
   company: '公司',
   role: '职位',
+  city: '工作地点',
   startDate: '开始时间',
   endDate: '结束时间',
   present: '至今',

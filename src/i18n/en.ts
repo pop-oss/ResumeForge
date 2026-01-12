@@ -39,6 +39,7 @@ export const en: Translations = {
   // Experience form
   company: 'Company',
   role: 'Role',
+  city: 'City',
   startDate: 'Start Date',
   endDate: 'End Date',
   present: 'Present',
