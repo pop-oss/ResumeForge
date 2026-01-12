@@ -15,6 +15,16 @@ export interface FreeDraggableProps {
   snapY?: number;
   /** 容器选择器，用于碰撞检测 */
   containerSelector?: string;
+  /** 是否可编辑（用于内联编辑功能，当前未实现） */
+  editable?: boolean;
+  /** 编辑值（用于内联编辑功能，当前未实现） */
+  value?: string;
+  /** 值变更回调（用于内联编辑功能，当前未实现） */
+  onValueChange?: (value: string) => void;
+  /** 编辑器样式类名（用于内联编辑功能，当前未实现） */
+  editorClassName?: string;
+  /** 是否多行编辑（用于内联编辑功能，当前未实现） */
+  multiline?: boolean;
 }
 
 /**
@@ -227,9 +237,9 @@ export const FreeDraggable: React.FC<FreeDraggableProps> = ({
 
   const hasOffset = currentPos.x !== 0 || currentPos.y !== 0;
 
+  // 使用 transform 而非 margin，避免影响 flex 布局中的其他元素
   const offsetStyle: React.CSSProperties = hasOffset ? {
-    marginLeft: currentPos.x,
-    marginTop: currentPos.y,
+    transform: `translate(${currentPos.x}px, ${currentPos.y}px)`,
   } : {};
 
   // 编辑和非编辑模式使用相同的 div 结构，保证布局一致
