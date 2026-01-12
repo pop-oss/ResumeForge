@@ -1,8 +1,8 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import { Button } from '../../components/ui/button';
 import { useResume } from '../resume/ResumeContext';
 import { useLanguage } from '../../i18n';
-import { Download, Upload, Trash2, Printer, Palette, ZoomIn, ZoomOut, FileDown, Globe } from 'lucide-react';
+import { Download, Upload, Trash2, Printer, Palette, ZoomIn, ZoomOut, FileDown, Globe, Menu, X } from 'lucide-react';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 
@@ -11,16 +11,11 @@ interface HeaderProps {
     setZoom: (z: number) => void;
 }
 
-// Just wrapping Select for simplicity or use native select for now if I didn't create Shadcn one fully.
-// I created Select primitive imports but did not create the Select UI component file yet.
-// I'll stick to a simple HTML select or buttons to avoid "Select is not exported" error since I didn't verify Select component creation.
-// Actually I missed creating `src/components/ui/select.tsx`. 
-// I will use simple buttons or native select for robustness now.
-
 export const Header: React.FC<HeaderProps> = ({ zoom, setZoom }) => {
     const { resumeData, setResumeData, resetResume, updateSettings } = useResume();
     const { language, setLanguage, t } = useLanguage();
     const fileInputRef = useRef<HTMLInputElement>(null);
+    const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
     const toggleLanguage = () => {
         setLanguage(language === 'en' ? 'zh' : 'en');
@@ -33,7 +28,6 @@ export const Header: React.FC<HeaderProps> = ({ zoom, setZoom }) => {
             return;
         }
 
-        // 获取所有样式
         const styles = Array.from(document.styleSheets)
             .map(styleSheet => {
                 try {
@@ -46,7 +40,6 @@ export const Header: React.FC<HeaderProps> = ({ zoom, setZoom }) => {
             })
             .join('\n');
 
-        // 创建隐藏的 iframe
         const iframe = document.createElement('iframe');
         iframe.style.position = 'absolute';
         iframe.style.width = '0';
@@ -61,7 +54,6 @@ export const Header: React.FC<HeaderProps> = ({ zoom, setZoom }) => {
             return;
         }
 
-        // 写入打印内容
         iframeDoc.open();
         iframeDoc.write(`
             <!DOCTYPE html>
@@ -70,58 +62,28 @@ export const Header: React.FC<HeaderProps> = ({ zoom, setZoom }) => {
                 <title>简历</title>
                 <style>
                     ${styles}
-                    @page {
-                        size: A4;
-                        margin: 0;
-                    }
-                    html, body {
-                        margin: 0;
-                        padding: 0;
-                        background: white;
-                        -webkit-print-color-adjust: exact;
-                        print-color-adjust: exact;
-                    }
-                    #print-content {
-                        width: 210mm;
-                        min-height: 297mm;
-                        margin: 0;
-                        padding: 0;
-                        background: white;
-                    }
-                    .print\\:hidden, [class*="ring-2"], button, .cursor-move {
-                        display: none !important;
-                    }
+                    @page { size: A4; margin: 0; }
+                    html, body { margin: 0; padding: 0; background: white; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+                    #print-content { width: 210mm; min-height: 297mm; margin: 0; padding: 0; background: white; }
+                    .print\\:hidden, [class*="ring-2"], button, .cursor-move { display: none !important; }
                 </style>
             </head>
-            <body>
-                <div id="print-content">
-                    ${element.innerHTML}
-                </div>
-            </body>
+            <body><div id="print-content">${element.innerHTML}</div></body>
             </html>
         `);
         iframeDoc.close();
 
-        // 等待 iframe 加载完成后打印
         iframe.onload = () => {
             setTimeout(() => {
                 iframe.contentWindow?.print();
-                // 打印完成后移除 iframe
-                setTimeout(() => {
-                    document.body.removeChild(iframe);
-                }, 100);
+                setTimeout(() => { document.body.removeChild(iframe); }, 100);
             }, 100);
         };
 
-        // 备用触发
         setTimeout(() => {
             if (document.body.contains(iframe)) {
                 iframe.contentWindow?.print();
-                setTimeout(() => {
-                    if (document.body.contains(iframe)) {
-                        document.body.removeChild(iframe);
-                    }
-                }, 100);
+                setTimeout(() => { if (document.body.contains(iframe)) document.body.removeChild(iframe); }, 100);
             }
         }, 500);
     };
@@ -141,30 +103,22 @@ export const Header: React.FC<HeaderProps> = ({ zoom, setZoom }) => {
         const element = document.getElementById('resume-preview');
         if (!element) return;
 
-        // A4 尺寸常量 (mm)
         const A4_WIDTH_MM = 210;
         const A4_HEIGHT_MM = 297;
-        
-        // 像素转换比例 (96 DPI)
         const MM_TO_PX = 3.7795275591;
-        // 保留用于未来可能的精确像素计算
         void MM_TO_PX;
 
-        // 保存当前状态，导出时临时重置
         const wasEditMode = resumeData.settings.editMode;
         const savedPositions = resumeData.settings.elementPositions;
         const savedZoom = zoom;
         
-        // 临时关闭编辑模式、清除位置偏移，并重置缩放为100%
         updateSettings({ editMode: false, elementPositions: {} });
-        setZoom(1); // 重置缩放为100%以确保PDF正确渲染
-        // 等待 React 重新渲染
+        setZoom(1);
         await new Promise(resolve => setTimeout(resolve, 200));
 
         try {
-            // 高质量渲染
             const canvas = await html2canvas(element, {
-                scale: 3, // 更高的缩放比例获得更清晰的图像
+                scale: 3,
                 useCORS: true,
                 logging: false,
                 backgroundColor: '#ffffff',
@@ -175,38 +129,15 @@ export const Header: React.FC<HeaderProps> = ({ zoom, setZoom }) => {
             });
 
             const imgData = canvas.toDataURL('image/png', 1.0);
-            
-            const pdf = new jsPDF({
-                orientation: 'portrait',
-                unit: 'mm',
-                format: 'a4',
-            });
-
-            // 计算图片在 PDF 中的尺寸
+            const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
             const imgWidth = A4_WIDTH_MM;
             const imgHeight = (canvas.height * imgWidth) / canvas.width;
-            
-            // 计算需要多少页
             const pageCount = Math.ceil(imgHeight / A4_HEIGHT_MM);
             
             for (let i = 0; i < pageCount; i++) {
-                if (i > 0) {
-                    pdf.addPage();
-                }
-                
-                // 计算当前页的 Y 偏移
+                if (i > 0) pdf.addPage();
                 const yOffset = -i * A4_HEIGHT_MM;
-                
-                pdf.addImage(
-                    imgData, 
-                    'PNG', 
-                    0, 
-                    yOffset, 
-                    imgWidth, 
-                    imgHeight,
-                    undefined,
-                    'FAST'
-                );
+                pdf.addImage(imgData, 'PNG', 0, yOffset, imgWidth, imgHeight, undefined, 'FAST');
             }
             
             pdf.save(`resume-${resumeData.basics.name.replace(/\s+/g, '-').toLowerCase()}.pdf`);
@@ -214,18 +145,12 @@ export const Header: React.FC<HeaderProps> = ({ zoom, setZoom }) => {
             console.error('PDF generation failed', error);
             alert('Failed to generate PDF. Please try the Print option.');
         } finally {
-            // 恢复原来的状态
-            updateSettings({ 
-                editMode: wasEditMode || false, 
-                elementPositions: savedPositions 
-            });
-            setZoom(savedZoom); // 恢复原来的缩放比例
+            updateSettings({ editMode: wasEditMode || false, elementPositions: savedPositions });
+            setZoom(savedZoom);
         }
     };
 
-    const handleImportClick = () => {
-        fileInputRef.current?.click();
-    };
+    const handleImportClick = () => { fileInputRef.current?.click(); };
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
@@ -234,25 +159,27 @@ export const Header: React.FC<HeaderProps> = ({ zoom, setZoom }) => {
         reader.onload = (ev) => {
             try {
                 const parsed = JSON.parse(ev.target?.result as string);
-                // Basic validation could go here
                 setResumeData(parsed);
             } catch (err) {
                 alert('Invalid JSON file');
             }
         };
         reader.readAsText(file);
-        e.target.value = ''; // reset
+        e.target.value = '';
     };
 
     return (
-        <header className="h-16 border-b px-4 sm:px-6 flex items-center justify-between bg-background z-50 hide-print shrink-0">
-            <div className="flex items-center gap-4">
-                <h1 className="text-xl font-bold tracking-tight hidden sm:block">{t.appTitle}</h1>
-                <div className="flex items-center gap-2">
+        <header className="fixed top-4 left-4 right-4 z-50 bg-white/80 backdrop-blur-xl border border-gray-200/50 rounded-2xl shadow-lg shadow-gray-200/50 px-4 md:px-6 py-3 hide-print">
+            <div className="flex items-center justify-between">
+                {/* Left section: Logo, Template, Theme, Language */}
+                <div className="flex items-center gap-2 md:gap-4">
+                    <h1 className="text-lg font-bold tracking-tight font-heading hidden md:block">{t.appTitle}</h1>
+                    
+                    {/* Template selector */}
                     <select
                         value={resumeData.settings.template}
                         onChange={(e) => updateSettings({ template: e.target.value as any })}
-                        className="h-9 w-32 rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                        className="h-9 w-28 md:w-32 rounded-lg border border-gray-200 bg-white px-3 py-1 text-sm cursor-pointer transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
                         title="Select Template"
                     >
                         <option value="classic">{t.classic}</option>
@@ -264,10 +191,13 @@ export const Header: React.FC<HeaderProps> = ({ zoom, setZoom }) => {
                         <option value="executive">{t.executive}</option>
                         <option value="tech">{t.tech}</option>
                     </select>
-                </div>
-                <div className="flex items-center gap-2 ml-2">
-                    <label className="text-sm font-medium flex items-center gap-1">
-                        <Palette className="w-4 h-4" />
+
+                    {/* Divider */}
+                    <div className="h-6 w-px bg-gray-200 hidden md:block" />
+
+                    {/* Theme color picker */}
+                    <label className="flex items-center gap-1 cursor-pointer transition-colors duration-200 hover:bg-gray-100 rounded-lg p-1.5">
+                        <Palette className="w-4 h-4 text-gray-600" />
                         <input
                             type="color"
                             value={resumeData.settings.themeColor}
@@ -276,47 +206,182 @@ export const Header: React.FC<HeaderProps> = ({ zoom, setZoom }) => {
                             title="Theme Color"
                         />
                     </label>
-                </div>
-                <Button variant="outline" size="sm" onClick={toggleLanguage} title="Switch Language">
-                    <Globe className="w-4 h-4 mr-1" />
-                    {language === 'en' ? '中文' : 'EN'}
-                </Button>
-            </div>
 
-            <div className="flex items-center gap-2">
-                <div className="flex items-center bg-muted rounded-md p-1 mr-2">
-                    <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => setZoom(Math.max(0.5, zoom - 0.1))}>
-                        <ZoomOut className="w-3 h-3" />
-                    </Button>
-                    <span className="text-xs w-8 text-center">{Math.round(zoom * 100)}%</span>
-                    <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => setZoom(Math.min(2, zoom + 0.1))}>
-                        <ZoomIn className="w-3 h-3" />
+                    {/* Language toggle */}
+                    <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        onClick={toggleLanguage} 
+                        title="Switch Language"
+                        className="cursor-pointer transition-colors duration-200"
+                    >
+                        <Globe className="w-4 h-4 mr-1" />
+                        <span className="hidden sm:inline">{language === 'en' ? '中文' : 'EN'}</span>
                     </Button>
                 </div>
 
-                <Button variant="ghost" size="sm" onClick={resetResume} title={t.reset}>
-                    <Trash2 className="w-4 h-4" />
-                </Button>
-                <div className="h-6 w-[1px] bg-border mx-1" />
+                {/* Right section: Actions */}
+                <div className="hidden md:flex items-center gap-2">
+                    {/* Zoom controls */}
+                    <div className="flex items-center bg-gray-100 rounded-lg p-1 mr-2">
+                        <Button 
+                            variant="ghost" 
+                            size="icon" 
+                            className="h-7 w-7 cursor-pointer transition-colors duration-200" 
+                            onClick={() => setZoom(Math.max(0.5, zoom - 0.1))}
+                        >
+                            <ZoomOut className="w-4 h-4" />
+                        </Button>
+                        <span className="text-xs w-10 text-center font-medium">{Math.round(zoom * 100)}%</span>
+                        <Button 
+                            variant="ghost" 
+                            size="icon" 
+                            className="h-7 w-7 cursor-pointer transition-colors duration-200" 
+                            onClick={() => setZoom(Math.min(2, zoom + 0.1))}
+                        >
+                            <ZoomIn className="w-4 h-4" />
+                        </Button>
+                    </div>
 
-                <input type="file" ref={fileInputRef} onChange={handleFileChange} className="hidden" accept=".json" />
-                <Button variant="outline" size="sm" onClick={handleImportClick}>
-                    <Upload className="w-4 h-4 sm:mr-2" />
-                    <span className="hidden sm:inline">{t.import}</span>
-                </Button>
-                <Button variant="outline" size="sm" onClick={handleExportJSON}>
-                    <Download className="w-4 h-4 sm:mr-2" />
-                    <span className="hidden sm:inline">{t.export}</span>
-                </Button>
-                <Button variant="outline" size="sm" onClick={handleDownloadPDF} title={t.downloadPDF}>
-                    <FileDown className="w-4 h-4 sm:mr-2" />
-                    <span className="hidden sm:inline">{t.downloadPDF}</span>
-                </Button>
-                <Button onClick={handlePrint} className="bg-blue-600 hover:bg-blue-700 text-white">
-                    <Printer className="w-4 h-4 sm:mr-2" />
-                    <span className="hidden sm:inline">{t.print}</span>
+                    {/* Reset button */}
+                    <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        onClick={resetResume} 
+                        title={t.reset}
+                        className="cursor-pointer transition-colors duration-200"
+                    >
+                        <Trash2 className="w-4 h-4" />
+                    </Button>
+
+                    {/* Divider */}
+                    <div className="h-6 w-px bg-gray-200 mx-1" />
+
+                    {/* Import/Export buttons */}
+                    <input type="file" ref={fileInputRef} onChange={handleFileChange} className="hidden" accept=".json" />
+                    <Button 
+                        variant="outline" 
+                        size="sm" 
+                        onClick={handleImportClick}
+                        className="cursor-pointer transition-colors duration-200"
+                    >
+                        <Upload className="w-4 h-4 mr-2" />
+                        {t.import}
+                    </Button>
+                    <Button 
+                        variant="outline" 
+                        size="sm" 
+                        onClick={handleExportJSON}
+                        className="cursor-pointer transition-colors duration-200"
+                    >
+                        <Download className="w-4 h-4 mr-2" />
+                        {t.export}
+                    </Button>
+                    <Button 
+                        variant="outline" 
+                        size="sm" 
+                        onClick={handleDownloadPDF} 
+                        title={t.downloadPDF}
+                        className="cursor-pointer transition-colors duration-200"
+                    >
+                        <FileDown className="w-4 h-4 mr-2" />
+                        {t.downloadPDF}
+                    </Button>
+                    <Button 
+                        onClick={handlePrint} 
+                        className="bg-blue-600 hover:bg-blue-700 text-white cursor-pointer transition-colors duration-200"
+                    >
+                        <Printer className="w-4 h-4 mr-2" />
+                        {t.print}
+                    </Button>
+                </div>
+
+                {/* Mobile menu button */}
+                <Button 
+                    variant="ghost" 
+                    size="icon" 
+                    className="md:hidden cursor-pointer transition-colors duration-200"
+                    onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                >
+                    {mobileMenuOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
                 </Button>
             </div>
+
+            {/* Mobile dropdown menu */}
+            {mobileMenuOpen && (
+                <div className="md:hidden mt-3 pt-3 border-t border-gray-200/50 space-y-2">
+                    {/* Zoom controls */}
+                    <div className="flex items-center justify-center bg-gray-100 rounded-lg p-2">
+                        <Button 
+                            variant="ghost" 
+                            size="icon" 
+                            className="h-8 w-8 cursor-pointer transition-colors duration-200" 
+                            onClick={() => setZoom(Math.max(0.5, zoom - 0.1))}
+                        >
+                            <ZoomOut className="w-4 h-4" />
+                        </Button>
+                        <span className="text-sm w-14 text-center font-medium">{Math.round(zoom * 100)}%</span>
+                        <Button 
+                            variant="ghost" 
+                            size="icon" 
+                            className="h-8 w-8 cursor-pointer transition-colors duration-200" 
+                            onClick={() => setZoom(Math.min(2, zoom + 0.1))}
+                        >
+                            <ZoomIn className="w-4 h-4" />
+                        </Button>
+                    </div>
+
+                    {/* Action buttons grid */}
+                    <div className="grid grid-cols-2 gap-2">
+                        <input type="file" ref={fileInputRef} onChange={handleFileChange} className="hidden" accept=".json" />
+                        <Button 
+                            variant="outline" 
+                            size="sm" 
+                            onClick={handleImportClick}
+                            className="w-full cursor-pointer transition-colors duration-200"
+                        >
+                            <Upload className="w-4 h-4 mr-2" />
+                            {t.import}
+                        </Button>
+                        <Button 
+                            variant="outline" 
+                            size="sm" 
+                            onClick={handleExportJSON}
+                            className="w-full cursor-pointer transition-colors duration-200"
+                        >
+                            <Download className="w-4 h-4 mr-2" />
+                            {t.export}
+                        </Button>
+                        <Button 
+                            variant="outline" 
+                            size="sm" 
+                            onClick={handleDownloadPDF}
+                            className="w-full cursor-pointer transition-colors duration-200"
+                        >
+                            <FileDown className="w-4 h-4 mr-2" />
+                            PDF
+                        </Button>
+                        <Button 
+                            variant="ghost" 
+                            size="sm" 
+                            onClick={resetResume}
+                            className="w-full cursor-pointer transition-colors duration-200"
+                        >
+                            <Trash2 className="w-4 h-4 mr-2" />
+                            {t.reset}
+                        </Button>
+                    </div>
+
+                    {/* Print button full width */}
+                    <Button 
+                        onClick={handlePrint} 
+                        className="w-full bg-blue-600 hover:bg-blue-700 text-white cursor-pointer transition-colors duration-200"
+                    >
+                        <Printer className="w-4 h-4 mr-2" />
+                        {t.print}
+                    </Button>
+                </div>
+            )}
         </header>
     );
 };

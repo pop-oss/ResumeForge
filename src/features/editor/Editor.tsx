@@ -105,12 +105,16 @@ export const Editor: React.FC = () => {
     };
 
     return (
-        <div className="h-full flex flex-col">
-            <div className="p-4 border-b bg-background/50 backdrop-blur z-10">
-                <h2 className="font-semibold">Editor</h2>
+        <div className="h-full flex flex-col bg-white border-r border-gray-200">
+            {/* Editor header with subtle background */}
+            <div className="p-4 border-b border-gray-100 bg-gray-50/50 backdrop-blur-sm">
+                <h2 className="font-semibold font-heading text-gray-900">Editor</h2>
             </div>
+            
+            {/* Scrollable content area */}
             <ScrollArea className="flex-1">
-                <div className="p-4 sm:p-6 space-y-6 pb-20">
+                {/* Content with gap-4 between sections */}
+                <div className="p-4 sm:p-6 pb-20">
                     <DndContext
                         sensors={sensors}
                         collisionDetection={closestCenter}
@@ -120,27 +124,30 @@ export const Editor: React.FC = () => {
                             items={sectionOrder}
                             strategy={verticalListSortingStrategy}
                         >
-                            {sectionOrder.map((sectionId) => {
-                                const Component = SECTION_COMPONENTS[sectionId];
-                                const title = SECTION_TITLES[sectionId] || sectionId;
-                                const labelKey = SECTION_LABEL_KEYS[sectionId] as keyof typeof fieldLabels;
-                                const customTitle = fieldLabels[labelKey] as string | undefined;
-                                const isVisible = sectionVisibility[sectionId] ?? true;
+                            {/* gap-4 for section spacing */}
+                            <div className="flex flex-col gap-4">
+                                {sectionOrder.map((sectionId) => {
+                                    const Component = SECTION_COMPONENTS[sectionId];
+                                    const title = SECTION_TITLES[sectionId] || sectionId;
+                                    const labelKey = SECTION_LABEL_KEYS[sectionId] as keyof typeof fieldLabels;
+                                    const customTitle = fieldLabels[labelKey] as string | undefined;
+                                    const isVisible = sectionVisibility[sectionId] ?? true;
 
-                                return (
-                                    <SectionWrapper
-                                        key={sectionId}
-                                        id={sectionId}
-                                        title={title}
-                                        customTitle={customTitle}
-                                        onTitleChange={(value) => updateSectionTitle(sectionId, value)}
-                                        isVisible={isVisible}
-                                        onToggleVisibility={() => toggleVisibility(sectionId)}
-                                    >
-                                        <Component />
-                                    </SectionWrapper>
-                                );
-                            })}
+                                    return (
+                                        <SectionWrapper
+                                            key={sectionId}
+                                            id={sectionId}
+                                            title={title}
+                                            customTitle={customTitle}
+                                            onTitleChange={(value) => updateSectionTitle(sectionId, value)}
+                                            isVisible={isVisible}
+                                            onToggleVisibility={() => toggleVisibility(sectionId)}
+                                        >
+                                            <Component />
+                                        </SectionWrapper>
+                                    );
+                                })}
+                            </div>
                         </SortableContext>
                     </DndContext>
                 </div>
