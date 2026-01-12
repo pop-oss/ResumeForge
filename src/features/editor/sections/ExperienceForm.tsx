@@ -95,6 +95,15 @@ export const ExperienceForm: React.FC = () => {
                                 <Input id={`role-${item.id}`} value={item.role} onChange={(e) => updateItem(item.id, 'role', e.target.value)} placeholder="Role Title" />
                             </div>
                         </div>
+                        <div className="space-y-2">
+                            <EditableLabel
+                                htmlFor={`city-${item.id}`}
+                                value={fieldLabels.expCity || ''}
+                                defaultValue={t.city || '城市/地点'}
+                                onChange={(v) => updateFieldLabel('expCity', v)}
+                            />
+                            <Input id={`city-${item.id}`} value={item.city} onChange={(e) => updateItem(item.id, 'city', e.target.value)} placeholder="San Francisco, CA" />
+                        </div>
                         <div className="grid grid-cols-2 gap-4">
                             <div className="space-y-2">
                                 <EditableLabel
