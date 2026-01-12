@@ -100,17 +100,31 @@ export const Header: React.FC<HeaderProps> = ({ zoom, setZoom }) => {
         `);
         iframeDoc.close();
 
+        let printed = false;
+        
         iframe.onload = () => {
+            if (printed) return;
+            printed = true;
             setTimeout(() => {
                 iframe.contentWindow?.print();
-                setTimeout(() => { document.body.removeChild(iframe); }, 100);
+                setTimeout(() => { 
+                    if (document.body.contains(iframe)) {
+                        document.body.removeChild(iframe); 
+                    }
+                }, 1000);
             }, 100);
         };
 
+        // 备用方案：如果onload没有触发，500ms后尝试打印
         setTimeout(() => {
-            if (document.body.contains(iframe)) {
+            if (!printed && document.body.contains(iframe)) {
+                printed = true;
                 iframe.contentWindow?.print();
-                setTimeout(() => { if (document.body.contains(iframe)) document.body.removeChild(iframe); }, 100);
+                setTimeout(() => { 
+                    if (document.body.contains(iframe)) {
+                        document.body.removeChild(iframe); 
+                    }
+                }, 1000);
             }
         }, 500);
     };
