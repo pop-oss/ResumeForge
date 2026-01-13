@@ -177,9 +177,10 @@ export function calculateBreakPoints(
       const remainingSpace = currentPageEnd - block.top;
       // 如果剩余空间不足以放下标题+至少一个条目（minHeaderSpace），则提前分页
       if (remainingSpace < minHeaderSpace + bottomSafeMargin) {
-        breakPoints.push(block.top);
-        currentPageStart = block.top;
-        currentPageEnd = block.top + pageContentHeight;
+        // 使用 Math.floor 确保分页点是整数，避免切割文字
+        breakPoints.push(Math.floor(block.top));
+        currentPageStart = Math.floor(block.top);
+        currentPageEnd = currentPageStart + pageContentHeight;
         continue;
       }
     }
@@ -199,7 +200,10 @@ export function calculateBreakPoints(
 
       // 如果找不到合适的分页点，强制在当前位置分页
       if (breakPoint === null) {
-        breakPoint = block.top;
+        breakPoint = Math.floor(block.top);
+      } else {
+        // 确保分页点是整数
+        breakPoint = Math.floor(breakPoint);
       }
 
       breakPoints.push(breakPoint);

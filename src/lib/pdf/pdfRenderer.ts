@@ -1,16 +1,70 @@
 /**
  * PDF渲染器
- * 负责将简历内容渲染为PDF
+ * 负责将简历内容渲染为PDF，使用智能分页算法避免孤儿标题和文字截断
  */
 
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
-import type { PDFRendererOptions } from './types';
-import { DEFAULT_PDF_RENDERER_OPTIONS } from './types';
+import type { PDFRendererOptions, PageBreakConfig } from './types';
+import { DEFAULT_PDF_RENDERER_OPTIONS, DEFAULT_PAGE_BREAK_CONFIG, MM_TO_PX } from './types';
 import { analyzeContentBlocks, calculateBreakPoints } from './pageBreakCalculator';
 
 /**
- * 渲染PDF
+ * 页面切片信息
+ */
+export interface PageSlice {
+  /** 起始 Y 坐标 (px) */
+  startY: number;
+  /** 结束 Y 坐标 (px) */
+  endY: number;
+  /** 切片高度 (px) */
+  height: number;
+}
+
+/**
+ * 根据分页点计算每页的切片信息
+ * @param breakPoints 分页点数组 (px)，表示每页的起始位置
+ * @param totalHeight 总高度 (px)
+ * @param scale 渲染缩放比例
+ * @returns 页面切片数组
+ */
+export function calculatePageSlices(
+  breakPoints: number[],
+  totalHeight: number,
+  scale: number
+): PageSlice[] {
+  const slices: PageSlice[] = [];
+  
+  // 如果没有分页点或只有一个分页点（起始点），返回单页
+  if (breakPoints.length === 0) {
+    slices.push({
+      startY: 0,
+      endY: totalHeight * scale,
+      height: totalHeight * scale,
+    });
+    return slices;
+  }
+
+  for (let i = 0; i < breakPoints.length; i++) {
+    // 使用 Math.floor 确保分页点是整数，避免浮点数精度问题
+    const startY = Math.floor(breakPoints[i] * scale);
+    const endY = i < breakPoints.length - 1
+      ? Math.floor(breakPoints[i + 1] * scale)
+      : Math.ceil(totalHeight * scale);
+    
+    slices.push({
+      startY,
+      endY,
+      height: endY - startY,
+    });
+  }
+
+  return slices;
+}
+
+
+/**
+ * 渲染PDF（使用智能分页）
  * @param resumeElement 简历DOM元素
  * @param options 渲染选项
  * @returns PDF文档
@@ -21,7 +75,42 @@ export async function renderPDF(
 ): Promise<jsPDF> {
   const opts: PDFRendererOptions = { ...DEFAULT_PDF_RENDERER_OPTIONS, ...options };
 
-  // 先渲染整个简历为canvas
+  // 边距设置
+  const margin = opts.margin || 12;
+  const contentWidthMm = opts.pageWidth - margin * 2;
+  const contentHeightMm = opts.pageHeight - margin * 2;
+  
+  // 计算缩放比例：将简历宽度缩放到 PDF 内容区域宽度
+  const resumeWidthPx = resumeElement.scrollWidth;
+  const scaleToFit = contentWidthMm / resumeWidthPx; // mm/px
+  
+  // 计算 PDF 页面可用高度对应的简历高度 (px)
+  // contentHeightMm 是 PDF 内容区域高度 (mm)
+  // scaleToFit 是 mm/px，所以 contentHeightMm / scaleToFit 得到简历像素高度
+  const pageHeightInResumePx = contentHeightMm / scaleToFit;
+
+  // 分析内容块并计算智能分页点
+  // 注意：analyzeContentBlocks 返回的 top/height 是相对于简历元素的像素值
+  // calculateBreakPoints 内部会将 pageHeightMm 转换为像素进行计算
+  const blocks = analyzeContentBlocks(resumeElement);
+  
+  // 将简历像素高度转换回 mm 用于分页配置
+  // pageHeightInResumePx 是简历中一页的像素高度
+  // 转换为 mm: pageHeightInResumePx * PX_TO_MM，但这不对
+  // 实际上我们需要直接使用 PDF 的页面高度配置
+  const pageBreakConfig: PageBreakConfig = {
+    ...DEFAULT_PAGE_BREAK_CONFIG,
+    // 关键修复：分页算法内部使用 (pageHeightMm - marginMm * 2) * MM_TO_PX 计算可用高度
+    // 我们需要让这个计算结果等于 pageHeightInResumePx
+    // 即: (pageHeightMm - margin * 2) * MM_TO_PX = pageHeightInResumePx
+    // 所以: pageHeightMm = pageHeightInResumePx / MM_TO_PX + margin * 2
+    pageHeightMm: pageHeightInResumePx / MM_TO_PX + margin * 2,
+    pageWidthMm: opts.pageWidth,
+    marginMm: margin,
+  };
+  const { breakPoints } = calculateBreakPoints(blocks, pageBreakConfig);
+
+  // 渲染整个简历为canvas
   const canvas = await html2canvas(resumeElement, {
     scale: opts.scale,
     useCORS: true,
@@ -39,55 +128,54 @@ export async function renderPDF(
     format: 'a4',
   });
 
-  // 边距设置
-  const margin = opts.margin || 18; // 默认18mm边距，更美观
-  const contentWidth = opts.pageWidth - margin * 2; // 内容区域宽度 (186mm)
-  const contentHeight = opts.pageHeight - margin * 2; // 内容区域高度 (273mm)
+  // 计算页面切片（基于分页点）
+  const slices = calculatePageSlices(breakPoints, resumeElement.scrollHeight, opts.scale);
   
-  // 计算缩放比例
-  const scale = contentWidth / resumeElement.scrollWidth;
-  const totalHeightMm = resumeElement.scrollHeight * scale;
+  // Canvas 尺寸
+  const canvasWidth = canvas.width;
   
-  const pageCount = Math.ceil(totalHeightMm / contentHeight);
-  
-  // 每页内容在原始canvas中的高度（像素）
-  const contentHeightPx = contentHeight / scale;
-
-  // 分页渲染
-  for (let i = 0; i < pageCount; i++) {
+  // 为每一页创建独立的 canvas 切片并添加到 PDF
+  for (let i = 0; i < slices.length; i++) {
     if (i > 0) pdf.addPage();
     
-    // 计算当前页在canvas中的起始位置和高度
-    const startY = i * contentHeightPx * opts.scale;
-    const sliceHeight = Math.min(contentHeightPx * opts.scale, canvas.height - startY);
+    const slice = slices[i];
     
-    // 创建当前页的canvas切片
+    // 创建当前页的 canvas
     const pageCanvas = document.createElement('canvas');
-    pageCanvas.width = canvas.width;
-    pageCanvas.height = sliceHeight;
+    pageCanvas.width = canvasWidth;
+    pageCanvas.height = slice.height;
     
     const ctx = pageCanvas.getContext('2d');
-    if (ctx) {
-      // 填充白色背景
-      ctx.fillStyle = '#ffffff';
-      ctx.fillRect(0, 0, pageCanvas.width, pageCanvas.height);
-      // 从原canvas复制当前页的内容
-      ctx.drawImage(
-        canvas,
-        0, startY, canvas.width, sliceHeight,  // 源区域
-        0, 0, canvas.width, sliceHeight         // 目标区域
-      );
+    if (!ctx) {
+      throw new Error('Failed to get canvas context');
     }
     
-    const imgData = pageCanvas.toDataURL('image/png', 1.0);
-    const imgHeightMm = (sliceHeight / opts.scale) * scale;
+    // 填充白色背景
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, pageCanvas.width, pageCanvas.height);
     
-    // 添加到PDF，带边距
-    pdf.addImage(imgData, 'PNG', margin, margin, contentWidth, imgHeightMm, undefined, 'FAST');
+    // 从原始 canvas 中裁剪当前页的内容
+    ctx.drawImage(
+      canvas,
+      0, slice.startY,           // 源图像的起始位置
+      canvasWidth, slice.height, // 源图像的裁剪尺寸
+      0, 0,                      // 目标位置
+      canvasWidth, slice.height  // 目标尺寸
+    );
+    
+    // 转换为图片数据
+    const pageImgData = pageCanvas.toDataURL('image/png', 1.0);
+    
+    // 计算当前切片在 PDF 中的高度
+    const sliceHeightMm = (slice.height / opts.scale) * scaleToFit;
+    
+    // 添加到 PDF
+    pdf.addImage(pageImgData, 'PNG', margin, margin, contentWidthMm, sliceHeightMm, undefined, 'FAST');
   }
 
   return pdf;
 }
+
 
 /**
  * 简化版PDF渲染（使用CSS分页）
