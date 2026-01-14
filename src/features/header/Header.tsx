@@ -1,8 +1,9 @@
 import React, { useRef, useState } from 'react';
 import { Button } from '../../components/ui/button';
 import { useResume } from '../resume/ResumeContext';
+import { useAgent, ApiConfigDialog } from '../agent';
 import { useLanguage } from '../../i18n';
-import { Download, Upload, Trash2, Printer, Palette, ZoomIn, ZoomOut, FileDown, Globe, Menu, X } from 'lucide-react';
+import { Download, Upload, Trash2, Printer, Palette, ZoomIn, ZoomOut, FileDown, Globe, Menu, X, Search, Settings } from 'lucide-react';
 import { renderPDF } from '../../lib/pdf/pdfRenderer';
 
 interface HeaderProps {
@@ -12,9 +13,11 @@ interface HeaderProps {
 
 export const Header: React.FC<HeaderProps> = ({ zoom, setZoom }) => {
     const { resumeData, setResumeData, resetResume, updateSettings } = useResume();
+    const { openSearchDialog } = useAgent();
     const { language, setLanguage, t } = useLanguage();
     const fileInputRef = useRef<HTMLInputElement>(null);
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+    const [apiConfigOpen, setApiConfigOpen] = useState(false);
 
     const toggleLanguage = () => {
         setLanguage(language === 'en' ? 'zh' : 'en');
@@ -191,6 +194,7 @@ export const Header: React.FC<HeaderProps> = ({ zoom, setZoom }) => {
     };
 
     return (
+    <>
         <header className="fixed top-4 left-4 right-4 z-50 bg-white/80 backdrop-blur-xl border border-gray-200/50 rounded-2xl shadow-lg shadow-gray-200/50 px-4 md:px-6 py-3 hide-print">
             <div className="flex items-center justify-between">
                 {/* Left section: Logo, Template, Theme, Language */}
@@ -264,6 +268,29 @@ export const Header: React.FC<HeaderProps> = ({ zoom, setZoom }) => {
                             <ZoomIn className="w-4 h-4" />
                         </Button>
                     </div>
+
+                    {/* Search Templates button */}
+                    <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        onClick={openSearchDialog} 
+                        title={t.searchTemplates}
+                        className="cursor-pointer transition-colors duration-200"
+                    >
+                        <Search className="w-4 h-4 mr-1" />
+                        <span className="hidden lg:inline">{t.searchTemplates}</span>
+                    </Button>
+
+                    {/* API Config button */}
+                    <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        onClick={() => setApiConfigOpen(true)} 
+                        title={t.configureApi}
+                        className="cursor-pointer transition-colors duration-200"
+                    >
+                        <Settings className="w-4 h-4" />
+                    </Button>
 
                     {/* Reset button */}
                     <Button 
@@ -359,6 +386,15 @@ export const Header: React.FC<HeaderProps> = ({ zoom, setZoom }) => {
                         <Button 
                             variant="outline" 
                             size="sm" 
+                            onClick={openSearchDialog}
+                            className="w-full cursor-pointer transition-colors duration-200"
+                        >
+                            <Search className="w-4 h-4 mr-2" />
+                            {t.searchTemplates}
+                        </Button>
+                        <Button 
+                            variant="outline" 
+                            size="sm" 
                             onClick={handleImportClick}
                             className="w-full cursor-pointer transition-colors duration-200"
                         >
@@ -387,7 +423,7 @@ export const Header: React.FC<HeaderProps> = ({ zoom, setZoom }) => {
                             variant="ghost" 
                             size="sm" 
                             onClick={resetResume}
-                            className="w-full cursor-pointer transition-colors duration-200"
+                            className="w-full col-span-2 cursor-pointer transition-colors duration-200"
                         >
                             <Trash2 className="w-4 h-4 mr-2" />
                             {t.reset}
@@ -405,5 +441,12 @@ export const Header: React.FC<HeaderProps> = ({ zoom, setZoom }) => {
                 </div>
             )}
         </header>
+        
+        {/* API Configuration Dialog */}
+        <ApiConfigDialog 
+            open={apiConfigOpen} 
+            onOpenChange={setApiConfigOpen} 
+        />
+    </>
     );
 };

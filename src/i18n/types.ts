@@ -93,4 +93,29 @@ export interface Translations {
   addItem: string;
   addCustomSection: string;
   previewCustom: string;
+
+  // Template Search
+  searchTemplates: string;
+  searchPlaceholder: string;
+  searching: string;
+  noResults: string;
+  noResultsHint: string;
+  selectTemplate: string;
+  importTemplate: string;
+  importing: string;
+  importSuccess: string;
+  importError: string;
+  templateSource: string;
+  templateStyle: string;
+  templateTags: string;
+  templateAuthor: string;
+  templateRating: string;
+  templateDownloads: string;
+  configureApi: string;
+  apiKey: string;
+  apiKeyPlaceholder: string;
+  saveConfig: string;
+  cancel: string;
+  confirm: string;
+  close: string;
 }
